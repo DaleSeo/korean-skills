@@ -1,0 +1,194 @@
+name: CI
+
+on:
+  schedule:
+    # 매일 11:00 UTC (KST 20:00)
+    - cron: "0 11 * * *"
+    # 매일 23:00 UTC (KST 08:00+1)
+    - cron: "0 23 * * *"
+  workflow_dispatch: # 수동 실행 지원
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate SKILL.md frontmatter
+        run: |
+          echo "📝 Validating YAML frontmatter..."
+          SKILL_FILE="skills/humanizer/SKILL.md"
+
+          if [ ! -f "$SKILL_FILE" ]; then
+            echo "❌ SKILL.md not found"
+            exit 1
+          fi
+
+          # Extract frontmatter (between --- markers)
+          FRONTMATTER=$(sed -n '/^---$/,/^---$/p' "$SKILL_FILE" | sed '1d;$d')
+
+          # Check required field: name
+          if echo "$FRONTMATTER" | grep -q "^name:"; then
+            NAME=$(echo "$FRONTMATTER" | grep "^name:" | sed 's/name: *//')
+            echo "✅ Found name: $NAME"
+
+            # Verify name is 'humanizer'
+            if [ "$NAME" = "humanizer" ]; then
+              echo "✅ Name is correct: humanizer"
+            else
+              echo "❌ Name should be 'humanizer', got '$NAME'"
+              exit 1
+            fi
+          else
+            echo "❌ Missing required field: name"
+            exit 1
+          fi
+
+          # Check required field: description
+          if echo "$FRONTMATTER" | grep -q "^description:"; then
+            DESC=$(echo "$FRONTMATTER" | grep "^description:" | sed 's/description: *//')
+            DESC_LEN=${#DESC}
+            echo "✅ Found description ($DESC_LEN chars)"
+
+            # Verify description length (1-1024 chars per Agent Skills spec)
+            if [ $DESC_LEN -lt 1 ] || [ $DESC_LEN -gt 1024 ]; then
+              echo "❌ Description must be 1-1024 characters, got $DESC_LEN"
+              exit 1
+            fi
+
+            # Check for non-ASCII characters in description (CLI compatibility)
+            if echo "$DESC" | grep -qP '[^\x00-\x7F]'; then
+              echo "⚠️  Warning: Description contains non-ASCII characters (may cause CLI parsing issues)"
+            else
+              echo "✅ Description is ASCII-safe"
+            fi
+          else
+            echo "❌ Missing required field: description"
+            exit 1
+          fi
+
+          # Check optional field: author
+          if echo "$FRONTMATTER" | grep -q "author:"; then
+            AUTHOR=$(echo "$FRONTMATTER" | grep "author:" | sed 's/.*author: *//')
+            echo "✅ Found author: $AUTHOR"
+
+            # Verify author is 'DaleSeo'
+            if [ "$AUTHOR" = "DaleSeo" ]; then
+              echo "✅ Author is correct: DaleSeo"
+            else
+              echo "⚠️  Warning: Author should be 'DaleSeo', got '$AUTHOR'"
+            fi
+          fi
+
+          echo "✅ Frontmatter validation passed"
+
+      - name: Validate references directory
+        run: |
+          echo "📚 Validating references directory..."
+
+          if [ ! -d "skills/humanizer/references" ]; then
+            echo "❌ references/ directory not found"
+            exit 1
+          fi
+
+          # Expected reference files
+          EXPECTED_FILES=(
+            "skills/humanizer/references/punctuation-patterns.md"
+            "skills/humanizer/references/spacing-patterns.md"
+            "skills/humanizer/references/pos-patterns.md"
+            "skills/humanizer/references/vocabulary-patterns.md"
+            "skills/humanizer/references/structure-patterns.md"
+          )
+
+          for file in "${EXPECTED_FILES[@]}"; do
+            if [ -f "$file" ]; then
+              echo "✅ Found: $file"
+            else
+              echo "❌ Missing: $file"
+              exit 1
+            fi
+          done
+
+          echo "✅ All reference files validated"
+
+      - name: Install skill with npx skills add
+        run: |
+          echo "🧪 Installing skill with npx skills add..."
+
+          # Install skill with claude-code agent and auto-confirm
+          npx skills add DaleSeo/korean-skills --skill humanizer --agent claude-code --yes || {
+            echo "⚠️  npx skills add failed, but continuing to verify..."
+            echo "This may be expected in CI environment due to TTY issues"
+          }
+
+          echo "✅ Skill installation step completed"
+
+      - name: Verify installed skill
+        run: |
+          echo "🔍 Verifying installed skill..."
+
+          # Debug: Show all potential skill locations
+          echo "🔎 Searching for skill installation..."
+          echo "Checking ~/.claude/skills/:"
+          ls -laR ~/.claude/ 2>/dev/null || echo "~/.claude/ not found"
+
+          echo ""
+          echo "Checking ~/.agents/skills/:"
+          ls -laR ~/.agents/ 2>/dev/null || echo "~/.agents/ not found"
+
+          echo ""
+          echo "Searching entire home directory for humanizer:"
+          find ~ -name "humanizer" -type d 2>/dev/null | head -10 || echo "No directories found"
+
+          # Try to find the skill in any location
+          SKILL_DIR=""
+          if [ -d ~/.claude/skills/humanizer ]; then
+            SKILL_DIR=~/.claude/skills/humanizer
+          elif [ -d ~/.agents/skills/humanizer ]; then
+            SKILL_DIR=~/.agents/skills/humanizer
+          else
+            # Last resort: search for it
+            SKILL_DIR=$(find ~ -name "humanizer" -type d 2>/dev/null | grep -E '(\.claude|\.agents)/skills' | head -1)
+          fi
+
+          if [ -z "$SKILL_DIR" ]; then
+            echo "❌ Skill directory not found in any expected location"
+            echo "This may indicate npx skills add failed to install"
+            exit 1
+          fi
+
+          echo "✅ Skill directory found: $SKILL_DIR"
+          echo "📁 Contents:"
+          ls -la "$SKILL_DIR"
+
+          # Find and display SKILL.md content
+          echo ""
+          echo "📄 Searching for SKILL.md..."
+          SKILL_FILE=$(find "$SKILL_DIR" -name "*.md" -type f | head -1)
+
+          if [ -z "$SKILL_FILE" ]; then
+            echo "❌ No .md files found in skill directory"
+            exit 1
+          fi
+
+          echo "✅ Found skill file: $SKILL_FILE"
+          echo "📋 Skill content preview:"
+          head -20 "$SKILL_FILE"
+
+          # Verify references directory
+          echo ""
+          if [ -d "$SKILL_DIR/references" ]; then
+            echo "✅ references/ directory installed"
+            echo "📚 Reference files:"
+            ls -1 "$SKILL_DIR/references/"
+          else
+            echo "⚠️  references/ directory not found"
+          fi
