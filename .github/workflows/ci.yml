@@ -17,15 +17,19 @@ jobs:
     permissions:
       contents: read
     timeout-minutes: 10
+    strategy:
+      matrix:
+        skill: [humanizer, grammar-checker]
+      fail-fast: false  # 한 스킬이 실패해도 다른 스킬 테스트 계속
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Validate SKILL.md frontmatter
         run: |
-          echo "📝 Validating YAML frontmatter..."
-          SKILL_FILE="skills/humanizer/SKILL.md"
+          echo "📝 Validating YAML frontmatter for ${{ matrix.skill }}..."
+          SKILL_FILE="skills/${{ matrix.skill }}/SKILL.md"
 
           if [ ! -f "$SKILL_FILE" ]; then
             echo "❌ SKILL.md not found"
@@ -40,11 +44,11 @@ jobs:
             NAME=$(echo "$FRONTMATTER" | grep "^name:" | sed 's/name: *//')
             echo "✅ Found name: $NAME"
 
-            # Verify name is 'humanizer'
-            if [ "$NAME" = "humanizer" ]; then
-              echo "✅ Name is correct: humanizer"
+            # Verify name matches matrix skill
+            if [ "$NAME" = "${{ matrix.skill }}" ]; then
+              echo "✅ Name is correct: ${{ matrix.skill }}"
             else
-              echo "❌ Name should be 'humanizer', got '$NAME'"
+              echo "❌ Name should be '${{ matrix.skill }}', got '$NAME'"
               exit 1
             fi
           else
@@ -54,7 +58,8 @@ jobs:
 
           # Check required field: description
           if echo "$FRONTMATTER" | grep -q "^description:"; then
-            DESC=$(echo "$FRONTMATTER" | grep "^description:" | sed 's/description: *//')
+            # Handle both quoted and unquoted descriptions
+            DESC=$(echo "$FRONTMATTER" | sed -n 's/^description: *"\?\(.*\)"\?$/\1/p')
             DESC_LEN=${#DESC}
             echo "✅ Found description ($DESC_LEN chars)"
 
@@ -75,65 +80,111 @@ jobs:
             exit 1
           fi
 
-          # Check optional field: author
-          if echo "$FRONTMATTER" | grep -q "author:"; then
-            AUTHOR=$(echo "$FRONTMATTER" | grep "author:" | sed 's/.*author: *//')
-            echo "✅ Found author: $AUTHOR"
+          echo "✅ Frontmatter validation passed for ${{ matrix.skill }}"
 
-            # Verify author is 'DaleSeo'
-            if [ "$AUTHOR" = "DaleSeo" ]; then
-              echo "✅ Author is correct: DaleSeo"
-            else
-              echo "⚠️  Warning: Author should be 'DaleSeo', got '$AUTHOR'"
-            fi
-          fi
-
-          echo "✅ Frontmatter validation passed"
-
-      - name: Validate references directory
+      - name: Validate skill structure
         run: |
-          echo "📚 Validating references directory..."
+          echo "📁 Validating skill structure for ${{ matrix.skill }}..."
+          SKILL_DIR="skills/${{ matrix.skill }}"
 
-          if [ ! -d "skills/humanizer/references" ]; then
-            echo "❌ references/ directory not found"
+          # Check SKILL.md exists
+          if [ ! -f "$SKILL_DIR/SKILL.md" ]; then
+            echo "❌ SKILL.md not found"
             exit 1
           fi
+          echo "✅ SKILL.md exists"
 
-          # Expected reference files
-          EXPECTED_FILES=(
-            "skills/humanizer/references/punctuation-patterns.md"
-            "skills/humanizer/references/spacing-patterns.md"
-            "skills/humanizer/references/pos-patterns.md"
-            "skills/humanizer/references/vocabulary-patterns.md"
-            "skills/humanizer/references/structure-patterns.md"
-          )
+          # Check for references directory (if it exists)
+          if [ -d "$SKILL_DIR/references" ]; then
+            echo "✅ references/ directory found"
+            REF_COUNT=$(find "$SKILL_DIR/references" -name "*.md" | wc -l)
+            echo "   Found $REF_COUNT reference files"
+          fi
 
-          for file in "${EXPECTED_FILES[@]}"; do
-            if [ -f "$file" ]; then
-              echo "✅ Found: $file"
-            else
-              echo "❌ Missing: $file"
-              exit 1
-            fi
-          done
+          # Check for examples directory (if it exists)
+          if [ -d "$SKILL_DIR/examples" ]; then
+            echo "✅ examples/ directory found"
+            EX_COUNT=$(find "$SKILL_DIR/examples" -type f | wc -l)
+            echo "   Found $EX_COUNT example files"
+          fi
 
-          echo "✅ All reference files validated"
+          # Check for scripts directory (if it exists)
+          if [ -d "$SKILL_DIR/scripts" ]; then
+            echo "✅ scripts/ directory found"
+            SCRIPT_COUNT=$(find "$SKILL_DIR/scripts" -type f | wc -l)
+            echo "   Found $SCRIPT_COUNT scripts"
+          fi
+
+          # Check for assets directory (if it exists)
+          if [ -d "$SKILL_DIR/assets" ]; then
+            echo "✅ assets/ directory found"
+            ASSET_COUNT=$(find "$SKILL_DIR/assets" -type f | wc -l)
+            echo "   Found $ASSET_COUNT assets"
+          fi
+
+          echo "✅ Skill structure validation passed for ${{ matrix.skill }}"
+
+      - name: Validate skill-specific requirements
+        run: |
+          echo "🔍 Running skill-specific validation for ${{ matrix.skill }}..."
+
+          if [ "${{ matrix.skill }}" = "humanizer" ]; then
+            echo "Validating humanizer-specific files..."
+
+            # Expected reference files for humanizer
+            EXPECTED_FILES=(
+              "skills/humanizer/references/punctuation-patterns.md"
+              "skills/humanizer/references/spacing-patterns.md"
+              "skills/humanizer/references/pos-patterns.md"
+              "skills/humanizer/references/vocabulary-patterns.md"
+              "skills/humanizer/references/structure-patterns.md"
+            )
+
+            for file in "${EXPECTED_FILES[@]}"; do
+              if [ -f "$file" ]; then
+                echo "✅ Found: $file"
+              else
+                echo "❌ Missing: $file"
+                exit 1
+              fi
+            done
+
+          elif [ "${{ matrix.skill }}" = "grammar-checker" ]; then
+            echo "Validating grammar-checker-specific files..."
+
+            # Expected reference files for grammar-checker
+            EXPECTED_FILES=(
+              "skills/grammar-checker/references/rules.md"
+              "skills/grammar-checker/references/common-errors.md"
+            )
+
+            for file in "${EXPECTED_FILES[@]}"; do
+              if [ -f "$file" ]; then
+                echo "✅ Found: $file"
+              else
+                echo "❌ Missing: $file"
+                exit 1
+              fi
+            done
+          fi
+
+          echo "✅ Skill-specific validation passed for ${{ matrix.skill }}"
 
       - name: Install skill with npx skills add
         run: |
-          echo "🧪 Installing skill with npx skills add..."
+          echo "🧪 Installing ${{ matrix.skill }} with npx skills add..."
 
           # Install skill with claude-code agent and auto-confirm
-          npx skills add DaleSeo/korean-skills --skill humanizer --agent claude-code --yes || {
+          npx skills add DaleSeo/korean-skills --skill ${{ matrix.skill }} --agent claude-code --yes || {
             echo "⚠️  npx skills add failed, but continuing to verify..."
             echo "This may be expected in CI environment due to TTY issues"
           }
 
-          echo "✅ Skill installation step completed"
+          echo "✅ Skill installation step completed for ${{ matrix.skill }}"
 
       - name: Verify installed skill
         run: |
-          echo "🔍 Verifying installed skill..."
+          echo "🔍 Verifying installed ${{ matrix.skill }}..."
 
           # Debug: Show all potential skill locations
           echo "🔎 Searching for skill installation..."
@@ -145,18 +196,18 @@ jobs:
           ls -laR ~/.agents/ 2>/dev/null || echo "~/.agents/ not found"
 
           echo ""
-          echo "Searching entire home directory for humanizer:"
-          find ~ -name "humanizer" -type d 2>/dev/null | head -10 || echo "No directories found"
+          echo "Searching entire home directory for ${{ matrix.skill }}:"
+          find ~ -name "${{ matrix.skill }}" -type d 2>/dev/null | head -10 || echo "No directories found"
 
           # Try to find the skill in any location
           SKILL_DIR=""
-          if [ -d ~/.claude/skills/humanizer ]; then
-            SKILL_DIR=~/.claude/skills/humanizer
-          elif [ -d ~/.agents/skills/humanizer ]; then
-            SKILL_DIR=~/.agents/skills/humanizer
+          if [ -d ~/.claude/skills/${{ matrix.skill }} ]; then
+            SKILL_DIR=~/.claude/skills/${{ matrix.skill }}
+          elif [ -d ~/.agents/skills/${{ matrix.skill }} ]; then
+            SKILL_DIR=~/.agents/skills/${{ matrix.skill }}
           else
             # Last resort: search for it
-            SKILL_DIR=$(find ~ -name "humanizer" -type d 2>/dev/null | grep -E '(\.claude|\.agents)/skills' | head -1)
+            SKILL_DIR=$(find ~ -name "${{ matrix.skill }}" -type d 2>/dev/null | grep -E '(\.claude|\.agents)/skills' | head -1)
           fi
 
           if [ -z "$SKILL_DIR" ]; then
@@ -183,12 +234,31 @@ jobs:
           echo "📋 Skill content preview:"
           head -20 "$SKILL_FILE"
 
-          # Verify references directory
+          # Verify references directory (if expected)
           echo ""
           if [ -d "$SKILL_DIR/references" ]; then
             echo "✅ references/ directory installed"
             echo "📚 Reference files:"
             ls -1 "$SKILL_DIR/references/"
           else
-            echo "⚠️  references/ directory not found"
+            echo "ℹ️  references/ directory not found (may not be required)"
+          fi
+
+          echo "✅ Skill verification completed for ${{ matrix.skill }}"
+
+  summary:
+    runs-on: ubuntu-latest
+    needs: test
+    if: always()
+    steps:
+      - name: Check test results
+        run: |
+          echo "📊 Test Summary"
+          echo "==============="
+          if [ "${{ needs.test.result }}" = "success" ]; then
+            echo "✅ All skill tests passed!"
+            exit 0
+          else
+            echo "❌ Some skill tests failed"
+            exit 1
           fi

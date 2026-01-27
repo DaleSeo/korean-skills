@@ -4,13 +4,25 @@
 >
 > AI 코딩 에이전트를 위한 한국어 스킬 모음
 
-## humanizer
+이 저장소는 Claude Code, Cursor, Windsurf 등 Agent Skills 형식을 지원하는 AI 코딩 에이전트에서 사용할 수 있는 한국어 특화 스킬을 제공합니다.
+
+## 스킬 목록 / Available Skills
+
+### 1. humanizer
 
 > Detects and corrects Korean AI writing patterns to make text sound naturally human-written.
 >
 > 한국어 AI 작문 패턴을 감지하고 자연스러운 인간의 글쓰기로 변환하는 스킬입니다.
 
 **Based on scientific research** (KatFishNet paper, 94.88% AUC accuracy) • **과학적 연구 기반** (KatFishNet 논문, 94.88% AUC 정확도)
+
+### 2. grammar-checker
+
+> Korean grammar, spelling, spacing, and punctuation checker based on standard Korean language rules.
+>
+> 표준 한국어 규칙에 기반한 문법, 맞춤법, 띄어쓰기, 구두점 검사기입니다.
+
+**Rule-based approach** with educational explanations • **규칙 기반 접근** 학습 지향적 설명 제공
 
 ---
 
@@ -221,4 +233,222 @@ rm -rf /tmp/korean-skills
 
 - 📄 [KatFishNet 논문 (ArXiv 2503.00032v4)](https://arxiv.org/abs/2503.00032v4)
 - 🌐 [humanizer (영어 버전)](https://github.com/blader/humanizer)
-- 📁 [상세 패턴 참고 자료](./references/) - 포괄적인 패턴 설명은 참고 파일 참조
+- 📁 [상세 패턴 참고 자료](./skills/humanizer/references/) - 포괄적인 패턴 설명은 참고 파일 참조
+
+---
+
+## grammar-checker
+
+> Korean grammar, spelling, spacing, and punctuation checker based on standard Korean language rules.
+>
+> 표준 한국어 규칙에 기반한 문법, 맞춤법, 띄어쓰기, 구두점 검사기입니다.
+
+**Rule-based approach** with educational explanations • **규칙 기반 접근** 학습 지향적 설명 제공
+
+---
+
+## English
+
+### What is grammar-checker?
+
+grammar-checker is an AI agent skill that detects and corrects Korean grammar, spelling, spacing, and punctuation errors based on standard Korean language rules. It provides clear explanations for each error, making it excellent for learning. The skill checks 4 categories of errors and provides confidence levels (certain errors vs recommendations vs suggestions).
+
+**The Problem**: Korean has complex rules for spacing (의존명사, 보조용언), spelling (되/돼, -ㄴ지/-는지), particles (조사), and punctuation. Even native speakers make mistakes, and LLMs often apply inconsistent rules.
+
+**The Solution**: This skill systematically checks text against standard Korean language rules with priority-based detection and context-aware corrections.
+
+### Key Features
+
+- **Rule-based**: Based on National Institute of Korean Language standards
+- **Educational**: Explains why each error is wrong, not just what to fix
+- **Confidence levels**: Distinguishes certain errors from recommendations
+- **Context-aware**: Adapts to formal vs informal writing styles
+- **4 error categories**: Spelling, spacing, grammar structure, punctuation
+- **Learning-oriented**: Helps users understand Korean language rules
+
+### Quick Start
+
+**Installation**:
+
+Using Skills CLI (recommended):
+
+```bash
+npx skills add daleseo/korean-skills --skill grammar-checker
+```
+
+Or manual installation:
+
+```bash
+mkdir -p ~/.claude/skills/grammar-checker
+git clone https://github.com/daleseo/korean-skills.git /tmp/korean-skills
+cp -r /tmp/korean-skills/skills/grammar-checker/* ~/.claude/skills/grammar-checker/
+rm -rf /tmp/korean-skills
+```
+
+**Usage**:
+
+```
+/grammar-checker
+
+[Paste Korean text to check]
+```
+
+### Error Categories
+
+The skill checks 4 categories of errors by priority:
+
+**1. Spelling/Orthography (Priority: Highest)**
+
+- 되/돼 confusion (되요 → 돼요)
+- -ㄴ지/-는지 confusion (좋는지 → 좋은지)
+- -ㄹ게/-를게 confusion (하를게요 → 할게요)
+- 던/든 confusion (먹든 음식 → 먹던 음식)
+- 안/않 confusion (하지 안다 → 하지 않다)
+
+**2. Spacing (Priority: High)**
+
+- Bound nouns (할수있다 → 할 수 있다)
+- Auxiliary verbs (해주세요 → 해 주세요, formal)
+- Unit nouns (10개 → 10 개, formal)
+- Compound words (사과 나무 → 사과나무)
+
+**3. Grammar Structure (Priority: Medium)**
+
+- Particle usage (책를 → 책을)
+- Verb endings (먹읍니다 → 먹습니다)
+- Tense consistency
+
+**4. Punctuation (Priority: Low)**
+
+- Excessive comma usage
+- Excessive exclamation marks (안녕하세요!!! → 안녕하세요!)
+- Missing periods
+
+### Example
+
+**Before (with errors)**:
+
+> 이 프로젝트는 사용자들에게 더나은 경험을 제공하기위해 시작되요. 우리는 다양한 기능을할수있는 플랫폼을 만들고싶습니다.
+
+**After (corrected)**:
+
+> 이 프로젝트는 사용자들에게 더 나은 경험을 제공하기 위해 시작됐어요. 우리는 다양한 기능을 할 수 있는 플랫폼을 만들고 싶습니다.
+
+**Detected errors**:
+- Spelling: 되요 → 돼요 (되어요 contraction)
+- Spacing: 더나은 → 더 나은, 제공하기위해 → 제공하기 위해, 기능을할수있는 → 기능을 할 수 있는, 만들고싶습니다 → 만들고 싶습니다
+
+### Resources
+
+- 📁 [Grammar rules reference](./skills/grammar-checker/references/rules.md)
+- 📁 [Common errors reference](./skills/grammar-checker/references/common-errors.md)
+- 📋 [Examples](./skills/grammar-checker/examples/)
+
+---
+
+## 한국어
+
+### grammar-checker란?
+
+grammar-checker는 표준 한국어 규칙에 기반하여 문법, 맞춤법, 띄어쓰기, 구두점 오류를 감지하고 교정하는 AI 에이전트 스킬입니다. 각 오류에 대한 명확한 설명을 제공하여 학습에도 탁월합니다. 4가지 오류 카테고리를 검사하며 확신도를 표시합니다 (확실한 오류 vs 권장 사항 vs 제안).
+
+**문제**: 한국어는 띄어쓰기(의존명사, 보조용언), 맞춤법(되/돼, -ㄴ지/-는지), 조사, 구두점에 복잡한 규칙이 있습니다. 원어민도 실수하기 쉽고, LLM은 일관되지 않은 규칙을 적용하는 경우가 많습니다.
+
+**해결책**: 이 스킬은 표준 한국어 규칙에 따라 체계적으로 텍스트를 검사하며, 우선순위 기반 검출과 문맥을 고려한 교정을 제공합니다.
+
+### 주요 특징
+
+- **규칙 기반**: 국립국어원 표준 한국어 규정 준수
+- **교육 지향**: 단순 교정이 아닌 왜 틀렸는지 설명
+- **확신도 표시**: 확실한 오류와 권장 사항 구분
+- **문맥 고려**: 격식체/비격식체에 맞춘 적용
+- **4가지 오류 카테고리**: 맞춤법, 띄어쓰기, 문법 구조, 구두점
+- **학습 지향**: 한국어 규칙 이해 돕기
+
+### 빠른 시작
+
+**설치**:
+
+Skills CLI 사용 (권장):
+
+```bash
+npx skills add daleseo/korean-skills --skill grammar-checker
+```
+
+또는 수동 설치:
+
+```bash
+mkdir -p ~/.claude/skills/grammar-checker
+git clone https://github.com/daleseo/korean-skills.git /tmp/korean-skills
+cp -r /tmp/korean-skills/skills/grammar-checker/* ~/.claude/skills/grammar-checker/
+rm -rf /tmp/korean-skills
+```
+
+**사용법**:
+
+```
+/grammar-checker
+
+[검사할 한국어 텍스트 붙여넣기]
+```
+
+### 오류 카테고리
+
+우선순위별 4가지 오류 카테고리 검사:
+
+**1. 맞춤법/철자 (우선순위: 최고)**
+
+- 되/돼 혼동 (되요 → 돼요)
+- -ㄴ지/-는지 혼동 (좋는지 → 좋은지)
+- -ㄹ게/-를게 혼동 (하를게요 → 할게요)
+- 던/든 혼동 (먹든 음식 → 먹던 음식)
+- 안/않 혼동 (하지 안다 → 하지 않다)
+
+**2. 띄어쓰기 (우선순위: 높음)**
+
+- 의존명사 (할수있다 → 할 수 있다)
+- 보조용언 (해주세요 → 해 주세요, 격식체)
+- 단위명사 (10개 → 10 개, 격식체)
+- 합성어 (사과 나무 → 사과나무)
+
+**3. 문법 구조 (우선순위: 중간)**
+
+- 조사 사용 (책를 → 책을)
+- 어미 사용 (먹읍니다 → 먹습니다)
+- 시제 일치
+
+**4. 구두점 (우선순위: 낮음)**
+
+- 과도한 쉼표 사용
+- 과도한 느낌표 (안녕하세요!!! → 안녕하세요!)
+- 마침표 누락
+
+### 예시
+
+**수정 전 (오류 포함)**:
+
+> 이 프로젝트는 사용자들에게 더나은 경험을 제공하기위해 시작되요. 우리는 다양한 기능을할수있는 플랫폼을 만들고싶습니다.
+
+**수정 후 (교정됨)**:
+
+> 이 프로젝트는 사용자들에게 더 나은 경험을 제공하기 위해 시작됐어요. 우리는 다양한 기능을 할 수 있는 플랫폼을 만들고 싶습니다.
+
+**발견된 오류**:
+- 맞춤법: 되요 → 돼요 (되어요의 준말)
+- 띄어쓰기: 더나은 → 더 나은, 제공하기위해 → 제공하기 위해, 기능을할수있는 → 기능을 할 수 있는, 만들고싶습니다 → 만들고 싶습니다
+
+### 참고 자료
+
+- 📁 [문법 규칙 참고](./skills/grammar-checker/references/rules.md)
+- 📁 [흔한 오류 참고](./skills/grammar-checker/references/common-errors.md)
+- 📋 [예시 파일](./skills/grammar-checker/examples/)
+
+---
+
+## License
+
+MIT License - Free to use, modify, and distribute.
+
+## Contributing
+
+Contributions are welcome! Feel free to submit issues or pull requests.
