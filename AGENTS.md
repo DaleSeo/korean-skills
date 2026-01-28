@@ -15,10 +15,14 @@ korean-skills/
 │   │   ├── SKILL.md        # Main skill documentation (Agent Skills format)
 │   │   ├── references/     # 5 pattern reference files (punctuation, spacing, pos, vocabulary, structure)
 │   │   └── examples/       # Before/after examples
-│   └── grammar-checker/     # Grammar & spelling checker
+│   ├── grammar-checker/     # Grammar & spelling checker
+│   │   ├── SKILL.md        # Main skill documentation (Agent Skills format)
+│   │   ├── references/     # Grammar rules & common errors
+│   │   └── examples/       # Error examples
+│   └── style-guide/         # Style consistency checker
 │       ├── SKILL.md        # Main skill documentation (Agent Skills format)
-│       ├── references/     # Grammar rules & common errors
-│       └── examples/       # Error examples
+│       ├── references/     # 6 category reference files (tone, terminology, numbering, list, quotation, datetime)
+│       └── examples/       # Inconsistent/consistent examples
 ├── README.md               # English documentation
 └── README_KO.md            # Korean documentation
 ```
@@ -75,6 +79,35 @@ Each skill follows the Agent Skills specification:
 
 - `references/rules.md` - Detailed Korean language rules
 - `references/common-errors.md` - Common error patterns
+
+### style-guide
+
+**Purpose**: Ensures consistent writing style within documents or across projects (tone, terminology, formatting)
+
+**3-Tier Authority System**:
+
+- **Tier 1 - Government Standards**: National Institute of Korean Language, Public Language guidelines
+- **Tier 2 - Academic Standards**: University thesis writing guidelines, citation formats (APA, MLA)
+- **Tier 3 - Industry Standards**: Kakao Enterprise tech writing guide, IT terminology standards
+
+**7 Check Categories** (by priority):
+
+1. Tone & Formality (Highest) - ~합니다/~해요 mixing, subject consistency (우리/저희)
+2. Terminology (High) - same concept different words (사용자/유저), loanword spelling
+3. Numbers & Units (Medium) - Arabic vs Korean numerals, unit spacing
+4. List Structure (Medium) - bullet styles (1./-, etc.), ending consistency
+5. Quotation & Emphasis (Low) - " " vs ' ', **bold** vs *italic*
+6. Date & Time (Low) - YYYY년 MM월 DD일 vs YYYY-MM-DD, 12h vs 24h
+7. Links & References (Low) - descriptive vs "click here", citation format
+
+**Key Reference Files**:
+
+- `references/tone-consistency.md` - Tone & formality patterns
+- `references/terminology.md` - Terminology unification
+- `references/numbering-units.md` - Number & unit formatting
+- `references/list-structure.md` - List & heading styles
+- `references/quotation-emphasis.md` - Quotation & emphasis
+- `references/datetime-reference.md` - Date/time/link/citation formats
 
 ## CI/CD
 

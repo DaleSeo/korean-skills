@@ -3,7 +3,7 @@
 > Korean language skills for AI coding agents
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/skills-2-green.svg)](#skills)
+[![Skills](https://img.shields.io/badge/skills-3-green.svg)](#skills)
 
 **[한국어 문서](./README_KO.md)** 🇰🇷
 
@@ -22,6 +22,7 @@ npx skills add daleseo/korean-skills
 ```bash
 npx skills add daleseo/korean-skills@humanizer
 npx skills add daleseo/korean-skills@grammar-checker
+npx skills add daleseo/korean-skills@style-guide
 ```
 
 ## Skills
@@ -129,6 +130,65 @@ npx skills add daleseo/korean-skills@grammar-checker
 - 📁 [Grammar rules reference](./skills/grammar-checker/references/rules.md)
 - 📁 [Common errors reference](./skills/grammar-checker/references/common-errors.md)
 - 📋 [Examples](./skills/grammar-checker/examples/)
+
+---
+
+### [style-guide](skills/style-guide)
+
+Korean document style consistency checker for uniform writing across documents
+
+**Key features:**
+
+- 7 consistency check categories
+- Multi-layered authority sources (government, academic, industry standards)
+- Context-aware suggestions (document type: business/academic/technical/marketing)
+- Majority-rule principle for conflicting styles
+
+**Check categories:**
+
+1. Tone & Formality (Highest priority) - formal vs informal speech, subject consistency
+2. Terminology (High priority) - same concept different words, loanword spelling
+3. Numbers & Units (Medium priority) - Arabic vs Korean numerals, unit spacing
+4. List Structure (Medium priority) - bullet styles, ending consistency
+5. Quotation & Emphasis (Low priority) - quotation marks, bold/italic
+6. Date & Time (Low priority) - date formats, 12h/24h time
+7. Links & References (Low priority) - link text, citation formats
+
+**When does it activate?**
+
+- When reviewing multi-author documents
+- When using `/style-guide` command
+- When maintaining project-wide terminology standards
+- When preparing formal documents for brand consistency
+
+**Example:**
+
+```
+Inconsistent: 사용자는 화면을 확인합니다. 유저가 페이지 설정을 변경해요.
+Consistent:   사용자는 화면을 확인합니다. 사용자가 화면 설정을 변경합니다.
+```
+
+**Usage:**
+
+```
+/style-guide
+
+[Paste Korean document to check for style consistency]
+```
+
+```bash
+npx skills add daleseo/korean-skills@style-guide
+```
+
+📖 **[Full documentation → SKILL.md](./skills/style-guide/SKILL.md)**
+
+**Resources:**
+
+- 📁 [Authority standards](./skills/style-guide/references/)
+  - Government: National Institute of Korean Language guidelines
+  - Academic: University thesis writing standards
+  - Industry: Kakao Enterprise tech writing guide
+- 📋 [Examples](./skills/style-guide/examples/)
 
 ## How to Use
 
