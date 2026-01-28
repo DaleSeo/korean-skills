@@ -28,6 +28,7 @@ korean-skills/
 ### Agent Skills Format
 
 Each skill follows the Agent Skills specification:
+
 - **SKILL.md**: Must have YAML frontmatter with `name` and `description` fields
 - **name**: Must match the skill directory name
 - **description**: 1-1024 characters, preferably ASCII-safe for CLI compatibility
@@ -38,11 +39,13 @@ Each skill follows the Agent Skills specification:
 **Purpose**: Transforms AI-generated Korean text into natural human writing based on scientific research (KatFishNet paper, 94.88% AUC accuracy)
 
 **Pattern Classification System** (v1.1.0):
+
 - All patterns include metadata: source, verification level, version
 - **Tier 1 - Scientific**: Patterns verified by KatFishNet paper (patterns 1-6: punctuation, 7-9: spacing, 10-12: POS diversity)
 - **Tier 2 - Empirical**: Community-added patterns based on observation (pattern 7: colon overuse added in v1.1.0)
 
 **5 Categories, 20 Patterns**:
+
 1. Punctuation (7 patterns) - 94.88% AUC
 2. Spacing (3 patterns) - 79.51% AUC
 3. POS Diversity (3 patterns) - 82.99% AUC
@@ -50,6 +53,7 @@ Each skill follows the Agent Skills specification:
 5. Sentence Structure (4 patterns)
 
 **Key Reference Files**:
+
 - `references/punctuation-patterns.md` - Includes metadata per pattern
 - `references/spacing-patterns.md`
 - `references/pos-patterns.md`
@@ -61,18 +65,21 @@ Each skill follows the Agent Skills specification:
 **Purpose**: Detects and corrects Korean grammar, spelling, spacing, and punctuation errors based on National Institute of Korean Language standards
 
 **4 Error Categories** (by priority):
+
 1. Spelling/Orthography (Highest) - 되/돼, -ㄴ지/-는지, etc.
 2. Spacing (High) - 의존명사, 보조용언, 단위명사
 3. Grammar Structure (Medium) - Particles, verb endings
 4. Punctuation (Low) - Commas, exclamation marks
 
 **Key Reference Files**:
+
 - `references/rules.md` - Detailed Korean language rules
 - `references/common-errors.md` - Common error patterns
 
 ## CI/CD
 
 GitHub Actions workflow (`.github/workflows/ci.yml`) runs:
+
 - **Frontmatter validation**: Checks `name` and `description` fields in SKILL.md
 - **Structure validation**: Verifies required directories and files exist
 - **Skill-specific validation**: Checks expected reference files per skill
@@ -84,12 +91,14 @@ Matrix strategy tests both skills independently (`fail-fast: false`).
 ## Documentation Pattern
 
 **README Split**: README.md (English) and README_KO.md (Korean) are separate files with identical structure:
+
 - Link to other language at top
 - Quick Start with installation commands
 - Brief skill summaries with one example each
 - Links to SKILL.md for full documentation
 
 **Documentation Hierarchy**:
+
 ```
 README.md/README_KO.md → SKILL.md → references/*.md
 ```
@@ -99,8 +108,10 @@ README.md/README_KO.md → SKILL.md → references/*.md
 When adding patterns to humanizer:
 
 1. **Add metadata** to pattern in reference file:
+
    ```markdown
    **메타데이터**:
+
    - 출처: [source: KatFishNet paper or korean-skills community]
    - 검증: [✅ 과학적 or 📊 경험적]
    - 버전: [version added, e.g., 1.1.0]
@@ -118,10 +129,12 @@ When adding patterns to humanizer:
 ## Coding Conventions
 
 From global CLAUDE.md:
+
 - 불필요한 환경 변수(.env, 설정값 등)는 사전에 만들어두지 않는다
 - 사용하지 않는 코드는 반드시 삭제한다
 
 Additional conventions:
+
 - Maintain bilingual documentation (English + Korean)
 - Keep READMEs concise; detailed docs go in SKILL.md
 - Reference files contain comprehensive patterns with examples
