@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        skill: [humanizer, grammar-checker]
+        skill: [humanizer, grammar-checker, style-guide, humanizer]
       fail-fast: false # 한 스킬이 실패해도 다른 스킬 테스트 계속
 
     steps:
