@@ -1,6 +1,6 @@
 ---
 name: grammar-checker
-description: "Korean grammar, spelling, spacing, and punctuation checker based on standard Korean language rules. Detects and corrects common errors including spelling mistakes (되/돼, -ㄴ지/-는지), spacing errors (의존명사, 보조용언), grammar issues (조사 사용, 시제), and punctuation problems. Use when: (1) Reviewing Korean documents after writing, (2) Real-time correction during writing, (3) Checking Korean comments or documentation in code, (4) Learning Korean grammar with explanations, or (5) Ensuring formal document quality."
+description: 표준 한국어 규칙에 기반한 문법, 맞춤법, 띄어쓰기, 구두점 검사기. 맞춤법 오류(되/돼, -ㄴ지/-는지), 띄어쓰기 오류(의존명사, 보조용언), 문법 오류(조사 사용, 시제), 구두점 문제를 감지하고 교정합니다. 다음 상황에서 사용하세요: (1) 한국어 문서 작성 후 검토, (2) 작성 중 실시간 교정, (3) 코드의 한국어 주석이나 문서 검사, (4) 설명과 함께 한국어 문법 학습, (5) 공식 문서 품질 보장.
 ---
 
 # grammar-checker: 한국어 문법 검사기
