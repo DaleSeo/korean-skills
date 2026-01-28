@@ -13,27 +13,14 @@
 
 ## 빠른 시작
 
-**설치:**
-
 ```bash
-# 특정 스킬 설치
-npx skills add daleseo/korean-skills --skill humanizer
-npx skills add daleseo/korean-skills --skill grammar-checker
-
 # 모든 스킬 설치
 npx skills add daleseo/korean-skills
-```
 
-<details>
-<summary>수동 설치</summary>
-
-```bash
-mkdir -p ~/.claude/skills/humanizer
-git clone https://github.com/daleseo/korean-skills.git /tmp/korean-skills
-cp -r /tmp/korean-skills/skills/humanizer/* ~/.claude/skills/humanizer/
-rm -rf /tmp/korean-skills
+# 또는 특정 스킬만 설치
+npx skills add daleseo/korean-skills@humanizer
+npx skills add daleseo/korean-skills@grammar-checker
 ```
-</details>
 
 ---
 

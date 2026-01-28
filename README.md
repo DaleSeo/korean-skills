@@ -13,27 +13,14 @@ This repository provides Korean language skills for AI coding agents (Claude Cod
 
 ## Quick Start
 
-**Installation:**
-
 ```bash
-# Install specific skill
-npx skills add daleseo/korean-skills --skill humanizer
-npx skills add daleseo/korean-skills --skill grammar-checker
-
 # Install all skills
 npx skills add daleseo/korean-skills
-```
 
-<details>
-<summary>Manual installation</summary>
-
-```bash
-mkdir -p ~/.claude/skills/humanizer
-git clone https://github.com/daleseo/korean-skills.git /tmp/korean-skills
-cp -r /tmp/korean-skills/skills/humanizer/* ~/.claude/skills/humanizer/
-rm -rf /tmp/korean-skills
+# Or install specific skill
+npx skills add daleseo/korean-skills@humanizer
+npx skills add daleseo/korean-skills@grammar-checker
 ```
-</details>
 
 ---
 
