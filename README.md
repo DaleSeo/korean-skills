@@ -40,7 +40,7 @@ humanizer is an AI agent skill that transforms artificial-sounding Korean text i
 
 - **Scientifically grounded**: Based on empirical linguistic research (KatFishNet paper)
 - **Korean-specific**: Analyzes patterns unique to Korean language, not translated from English/Chinese
-- **19 detection patterns**: Organized into 5 categories by priority
+- **20 detection patterns**: Organized into 5 categories by priority
 - **Preserves meaning**: Maintains original intent and formality level
 - **High accuracy**: 94.88% AUC for punctuation, 82.99% for POS, 79.51% for spacing
 
@@ -75,7 +75,7 @@ rm -rf /tmp/korean-skills
 
 The skill analyzes 5 categories of AI writing patterns:
 
-**1. Punctuation (6 patterns)** - Highest priority (94.88% AUC)
+**1. Punctuation (7 patterns)** - Highest priority (94.88% AUC for patterns 1-6)
 
 - Excessive comma usage (LLM 61% vs human 26%)
 - English-style comma placement
@@ -83,6 +83,7 @@ The skill analyzes 5 categories of AI writing patterns:
 - Sentence-ending comma patterns
 - Unnecessary list commas
 - Em-dash overuse
+- English-style colon overuse (NEW in v1.1.0)
 
 **2. Spacing (3 patterns)** - High priority (79.51% AUC)
 
@@ -148,7 +149,7 @@ humanizer는 과학적 언어학 연구를 기반으로 인위적인 한국어 �
 
 - **과학적 기반**: 실증적 언어학 연구 기반 (KatFishNet 논문)
 - **한국어 특화**: 영어/중국어 번역이 아닌 한국어 고유 패턴 분석
-- **19가지 패턴**: 우선순위별 5개 카테고리로 구성
+- **20가지 패턴**: 우선순위별 5개 카테고리로 구성
 - **의미 보존**: 원문의 의도와 격식 수준 유지
 - **높은 정확도**: 문장부호 94.88% AUC, 품사 82.99%, 띄어쓰기 79.51%
 
@@ -183,7 +184,7 @@ rm -rf /tmp/korean-skills
 
 5가지 카테고리의 AI 작문 패턴 분석:
 
-**1. 문장부호 (6가지)** - 최고 우선순위 (94.88% AUC)
+**1. 문장부호 (7가지)** - 최고 우선순위 (94.88% AUC, 패턴 1-6)
 
 - 과도한 쉼표 사용 (LLM 61% vs 인간 26%)
 - 영어식 쉼표 위치
@@ -191,6 +192,7 @@ rm -rf /tmp/korean-skills
 - 문장 끝 쉼표 패턴
 - 불필요한 목록 쉼표
 - 줄표(Em-Dash) 과다 사용
+- 영어식 콜론 과다 사용 (v1.1.0 신규)
 
 **2. 띄어쓰기 (3가지)** - 높은 우선순위 (79.51% AUC)
 

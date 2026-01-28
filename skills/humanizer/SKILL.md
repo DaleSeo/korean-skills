@@ -1,10 +1,10 @@
 ---
 name: humanizer
-description: Detects and corrects Korean AI writing patterns to transform text into natural human writing. Based on scientific linguistic research (KatFishNet paper with 94.88% AUC accuracy). Analyzes 19 patterns including comma overuse, spacing rigidity, POS diversity, AI vocabulary overuse, and structural monotony. Use when humanizing Korean text from ChatGPT/Claude/Gemini or removing AI traces from Korean LLM output.
+description: Detects and corrects Korean AI writing patterns to transform text into natural human writing. Based on scientific linguistic research (KatFishNet paper with 94.88% AUC accuracy). Analyzes 20 patterns including comma overuse, spacing rigidity, POS diversity, AI vocabulary overuse, and structural monotony. Use when humanizing Korean text from ChatGPT/Claude/Gemini or removing AI traces from Korean LLM output.
 license: MIT
 metadata:
   author: DaleSeo
-  version: "1.0.0"
+  version: "1.1.0"
 allowed-tools: Read Write Edit Grep Glob AskUserQuestion
 ---
 
@@ -18,14 +18,14 @@ allowed-tools: Read Write Edit Grep Glob AskUserQuestion
 - 이 스킬은 **한국어 텍스트에만** 집중하며, 영어 번역이나 다른 언어는 다루지 않습니다
 - 검출 패턴은 높은 정확도(쉼표 패턴: 94.88% AUC, 품사 다양성: 82.99% AUC, 띄어쓰기: 79.51% AUC)를 가진 **실증적 언어학 분석**에 기반합니다
 - 당신의 목표는 원래의 의미와 의도를 보존하면서 텍스트를 **자연스럽게 인간이 작성한 것처럼** 만드는 것입니다
-- 우선순위에 따라 구성된 5개 카테고리의 19가지 고유 패턴을 분석합니다
+- 우선순위에 따라 구성된 5개 카테고리의 20가지 고유 패턴을 분석합니다
 
 ## 작업 설명
 
 실행될 때 다음을 수행합니다:
 
 1. **한국어 텍스트 읽기** - 사용자가 제공한 텍스트(인자, 대화 컨텍스트, 또는 파일)
-2. **텍스트 분석** - 아래에 설명된 19가지 검출 패턴에 대해 분석
+2. **텍스트 분석** - 아래에 설명된 20가지 검출 패턴에 대해 분석
 3. **AI 작문 마커 식별** - 각 발견 사항에 대한 과학적 근거와 함께
 4. **텍스트 재작성** - 자연스럽고 인간이 작성한 것처럼 들리도록
 5. **수정된 버전 제시** - 주요 변경 사항의 요약과 함께(선택적)
@@ -51,25 +51,37 @@ LLM이 생성한 한국어 텍스트는 인간의 글쓰기와 측정 가능하�
 
 ---
 
-## 검출 패턴 (총 19가지)
+## 검출 패턴 (총 20가지)
+
+### 패턴 분류 체계
+
+모든 패턴은 출처와 검증 수준에 따라 메타데이터를 포함합니다:
+
+**✅ 과학적 검증 패턴**: KatFishNet 논문(ArXiv 2503.00032v4, 2025)에서 실증적으로 검증된 패턴
+**📊 경험적 관찰 패턴**: 실무 경험과 관찰을 기반으로 한 패턴
+
+각 패턴에는 다음 메타데이터가 포함됩니다:
+- **출처**: 패턴의 근거 (논문, 커뮤니티 등)
+- **검증**: 검증 수준 (과학적, 경험적)
+- **버전**: 패턴이 추가된 스킬 버전
 
 ### 빠른 참조
 
 **카테고리별 우선순위와 대표 패턴**:
 
-1. **문장부호** (최고: 94.88% AUC) - 쉼표 과다, 영어식 배치, 연결어미 뒤 쉼표
-2. **띄어쓰기** (높음: 79.51% AUC) - 경직된 의존명사, 보조용언, 숫자 띄어쓰기
-3. **품사 다양성** (높음: 82.99% AUC) - 명사 과다, 동사/형용사 빈곤
-4. **어휘** (중간) - AI 유행어, 불필요한 한자어, 영어 직역
-5. **구조** (중간) - 문장 리듬, 3박자, 접속사, 경어체
+1. **문장부호** (7가지, 최고: 94.88% AUC) - 쉼표 과다, 영어식 배치, 연결어미 뒤 쉼표, 콜론 과다
+2. **띄어쓰기** (3가지, 높음: 79.51% AUC) - 경직된 의존명사, 보조용언, 숫자 띄어쓰기
+3. **품사 다양성** (3가지, 높음: 82.99% AUC) - 명사 과다, 동사/형용사 빈곤
+4. **어휘** (3가지, 중간) - AI 유행어, 불필요한 한자어, 영어 직역
+5. **구조** (4가지, 중간) - 문장 리듬, 3박자, 접속사, 경어체
 
-전체 19가지 패턴 목록과 상세 내용은 각 카테고리 참조 문서 참조.
+전체 20가지 패턴 목록과 상세 내용은 각 카테고리 참조 문서 참조.
 
 ### 상세 패턴 설명
 
 각 패턴의 완전한 검출 기준, 과학적 근거, 예시, 교정 전략은 다음을 참조하세요:
 
-- **문장부호 패턴 (1-6)**: [references/punctuation-patterns.md](references/punctuation-patterns.md) 참조
+- **문장부호 패턴 (1-7)**: [references/punctuation-patterns.md](references/punctuation-patterns.md) 참조
 - **띄어쓰기 패턴 (7-9)**: [references/spacing-patterns.md](references/spacing-patterns.md) 참조
 - **품사 다양성 패턴 (10-12)**: [references/pos-patterns.md](references/pos-patterns.md) 참조
 - **어휘 패턴 (13-15)**: [references/vocabulary-patterns.md](references/vocabulary-patterns.md) 참조
@@ -93,7 +105,7 @@ LLM이 생성한 한국어 텍스트는 인간의 글쓰기와 측정 가능하�
 ### 2단계: 모든 패턴에 대해 분석
 
 다음을 체계적으로 확인합니다:
-- **문장부호 패턴 (1-6)**: 쉼표 개수, 위치 확인, 불필요한 사용 식별
+- **문장부호 패턴 (1-7)**: 쉼표 개수, 위치 확인, 불필요한 사용 식별, 영어식 콜론 사용 확인
 - **띄어쓰기 패턴 (7-9)**: 의존명사 띄어쓰기 일관성, 보조용언 띄어쓰기, 숫자 띄어쓰기 확인
 - **품사 패턴 (10-12)**: 명사/동사/형용사 비율 추정, 명사화 구문 식별
 - **어휘 패턴 (13-15)**: AI 유행어, 한자어 과다 사용, 영어 직역 표시
