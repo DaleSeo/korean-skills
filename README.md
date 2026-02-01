@@ -33,7 +33,7 @@ Detects and corrects Korean AI writing patterns to transform text into natural h
 
 **Key features:**
 
-- 20 detection patterns across 5 categories
+- 21 detection patterns across 5 categories
 - Based on KatFishNet paper (94.88% AUC accuracy)
 - Preserves meaning and formality level
 
@@ -42,7 +42,7 @@ Detects and corrects Korean AI writing patterns to transform text into natural h
 - Punctuation (7 patterns) - 94.88% AUC
 - Spacing (3 patterns) - 79.51% AUC
 - POS Diversity (3 patterns) - 82.99% AUC
-- Vocabulary (3 patterns)
+- Vocabulary (4 patterns)
 - Sentence Structure (4 patterns)
 
 **When does it activate?**
