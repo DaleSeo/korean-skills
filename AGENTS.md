@@ -42,18 +42,18 @@ Each skill follows the Agent Skills specification:
 
 **Purpose**: Transforms AI-generated Korean text into natural human writing based on scientific research (KatFishNet paper, 94.88% AUC accuracy)
 
-**Pattern Classification System** (v1.2.0):
+**Pattern Classification System** (v1.3.0):
 
 - All patterns include metadata: source, verification level, version
 - **Tier 1 - Scientific**: Patterns verified by KatFishNet paper (patterns 1-7: punctuation, 8-10: spacing, 11-13: POS diversity)
-- **Tier 2 - Empirical**: Community-added patterns based on observation (pattern 7: colon overuse added in v1.1.0, pattern 17: plural marker overuse added in v1.2.0)
+- **Tier 2 - Empirical**: Community-added patterns based on observation (pattern 7: colon overuse added in v1.1.0, pattern 17: plural marker overuse added in v1.2.0, patterns 18-20: pronoun/demonstrative overuse and subject omission added in v1.3.0)
 
-**5 Categories, 21 Patterns**:
+**5 Categories, 24 Patterns**:
 
 1. Punctuation (7 patterns) - 94.88% AUC
 2. Spacing (3 patterns) - 79.51% AUC
 3. POS Diversity (3 patterns) - 82.99% AUC
-4. Vocabulary (4 patterns)
+4. Vocabulary (7 patterns) - includes pronoun overuse, demonstrative overuse, subject omission
 5. Sentence Structure (4 patterns)
 
 **Key Reference Files**:

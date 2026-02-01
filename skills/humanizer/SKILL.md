@@ -1,10 +1,10 @@
 ---
 name: humanizer
-description: AI가 생성한 한국어 텍스트의 특징적인 패턴을 감지하고 자연스러운 인간의 글쓰기로 변환합니다. 과학적 언어학 연구(KatFishNet 논문, 94.88% AUC 정확도)에 기반합니다. 쉼표 과다, 띄어쓰기 경직성, 품사 다양성, AI 어휘 과용, 복수형 과다, 구조적 단조로움 등 21가지 패턴을 분석합니다. ChatGPT/Claude/Gemini가 생성한 한국어 텍스트를 자연스럽게 만들거나 LLM 출력에서 AI 흔적을 제거할 때 사용하세요.
+description: AI가 생성한 한국어 텍스트의 특징적인 패턴을 감지하고 자연스러운 인간의 글쓰기로 변환합니다. 과학적 언어학 연구(KatFishNet 논문, 94.88% AUC 정확도)에 기반합니다. 쉼표 과다, 띄어쓰기 경직성, 품사 다양성, AI 어휘 과용, 대명사 과다, 복수형 과다, 구조적 단조로움 등 24가지 패턴을 분석합니다. ChatGPT/Claude/Gemini가 생성한 한국어 텍스트를 자연스럽게 만들거나 LLM 출력에서 AI 흔적을 제거할 때 사용하세요.
 license: MIT
 metadata:
   author: DaleSeo
-  version: "1.2.0"
+  version: "1.3.0"
 allowed-tools: Read Write Edit Grep Glob AskUserQuestion
 ---
 
@@ -18,14 +18,14 @@ allowed-tools: Read Write Edit Grep Glob AskUserQuestion
 - 이 스킬은 **한국어 텍스트에만** 집중하며, 영어 번역이나 다른 언어는 다루지 않습니다
 - 검출 패턴은 높은 정확도(쉼표 패턴: 94.88% AUC, 품사 다양성: 82.99% AUC, 띄어쓰기: 79.51% AUC)를 가진 **실증적 언어학 분석**에 기반합니다
 - 당신의 목표는 원래의 의미와 의도를 보존하면서 텍스트를 **자연스럽게 인간이 작성한 것처럼** 만드는 것입니다
-- 우선순위에 따라 구성된 5개 카테고리의 21가지 고유 패턴을 분석합니다
+- 우선순위에 따라 구성된 5개 카테고리의 24가지 고유 패턴을 분석합니다
 
 ## 작업 설명
 
 실행될 때 다음을 수행합니다:
 
 1. **한국어 텍스트 읽기** - 사용자가 제공한 텍스트(인자, 대화 컨텍스트, 또는 파일)
-2. **텍스트 분석** - 아래에 설명된 21가지 검출 패턴에 대해 분석
+2. **텍스트 분석** - 아래에 설명된 24가지 검출 패턴에 대해 분석
 3. **AI 작문 마커 식별** - 각 발견 사항에 대한 과학적 근거와 함께
 4. **텍스트 재작성** - 자연스럽고 인간이 작성한 것처럼 들리도록
 5. **수정된 버전 제시** - 주요 변경 사항의 요약과 함께(선택적)
@@ -51,7 +51,7 @@ LLM이 생성한 한국어 텍스트는 인간의 글쓰기와 측정 가능하�
 
 ---
 
-## 검출 패턴 (총 21가지)
+## 검출 패턴 (총 24가지)
 
 ### 패턴 분류 체계
 
@@ -72,10 +72,10 @@ LLM이 생성한 한국어 텍스트는 인간의 글쓰기와 측정 가능하�
 1. **문장부호** (7가지, 최고: 94.88% AUC) - 쉼표 과다, 영어식 배치, 연결어미 뒤 쉼표, 콜론 과다
 2. **띄어쓰기** (3가지, 높음: 79.51% AUC) - 경직된 의존명사, 보조용언, 숫자 띄어쓰기
 3. **품사 다양성** (3가지, 높음: 82.99% AUC) - 명사 과다, 동사/형용사 빈곤
-4. **어휘** (4가지, 중간) - AI 유행어, 불필요한 한자어, 영어 직역, 복수형 과다
+4. **어휘** (7가지, 중간) - AI 유행어, 불필요한 한자어, 영어 직역, 복수형 과다, 대명사 과다, 지시관형사 과다, 주어 생략 미흡
 5. **구조** (4가지, 중간) - 문장 리듬, 3박자, 접속사, 경어체
 
-전체 21가지 패턴 목록과 상세 내용은 각 카테고리 참조 문서 참조.
+전체 24가지 패턴 목록과 상세 내용은 각 카테고리 참조 문서 참조.
 
 ### 상세 패턴 설명
 
@@ -84,8 +84,8 @@ LLM이 생성한 한국어 텍스트는 인간의 글쓰기와 측정 가능하�
 - **문장부호 패턴 (1-7)**: [references/punctuation-patterns.md](references/punctuation-patterns.md) 참조
 - **띄어쓰기 패턴 (8-10)**: [references/spacing-patterns.md](references/spacing-patterns.md) 참조
 - **품사 다양성 패턴 (11-13)**: [references/pos-patterns.md](references/pos-patterns.md) 참조
-- **어휘 패턴 (14-17)**: [references/vocabulary-patterns.md](references/vocabulary-patterns.md) 참조
-- **구조 패턴 (18-21)**: [references/structure-patterns.md](references/structure-patterns.md) 참조
+- **어휘 패턴 (14-20)**: [references/vocabulary-patterns.md](references/vocabulary-patterns.md) 참조
+- **구조 패턴 (21-24)**: [references/structure-patterns.md](references/structure-patterns.md) 참조
 
 **상세 패턴을 로드해야 할 때**:
 - 해당 카테고리의 패턴을 감지했을 때 특정 카테고리 파일을 로드하세요
