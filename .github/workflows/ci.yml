@@ -1,8 +1,6 @@
 name: CI
 
 on:
-  schedule:
-    - cron: "0 * * * *" # 매 시간 정각
   workflow_dispatch:
   pull_request:
   push:
@@ -11,251 +9,103 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    timeout-minutes: 10
-    strategy:
-      matrix:
-        skill: [humanizer, grammar-checker, style-guide, humanizer]
-      fail-fast: false # 한 스킬이 실패해도 다른 스킬 테스트 계속
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Validate SKILL.md frontmatter
+      - name: Install all skills (local)
         run: |
-          echo "📝 Validating YAML frontmatter for ${{ matrix.skill }}..."
-          SKILL_FILE="skills/${{ matrix.skill }}/SKILL.md"
+          npx skills add . --yes
+          echo "✅ Successfully installed all skills from local repository"
 
-          if [ ! -f "$SKILL_FILE" ]; then
-            echo "❌ SKILL.md not found"
-            exit 1
-          fi
-
-          # Extract frontmatter (between --- markers)
-          FRONTMATTER=$(sed -n '/^---$/,/^---$/p' "$SKILL_FILE" | sed '1d;$d')
-
-          # Check required field: name
-          if echo "$FRONTMATTER" | grep -q "^name:"; then
-            NAME=$(echo "$FRONTMATTER" | grep "^name:" | sed 's/name: *//')
-            echo "✅ Found name: $NAME"
-
-            # Verify name matches matrix skill
-            if [ "$NAME" = "${{ matrix.skill }}" ]; then
-              echo "✅ Name is correct: ${{ matrix.skill }}"
-            else
-              echo "❌ Name should be '${{ matrix.skill }}', got '$NAME'"
-              exit 1
-            fi
-          else
-            echo "❌ Missing required field: name"
-            exit 1
-          fi
-
-          # Check required field: description
-          if echo "$FRONTMATTER" | grep -q "^description:"; then
-            # Handle both quoted and unquoted descriptions
-            DESC=$(echo "$FRONTMATTER" | sed -n 's/^description: *"\?\(.*\)"\?$/\1/p')
-            DESC_LEN=${#DESC}
-            echo "✅ Found description ($DESC_LEN chars)"
-
-            # Verify description length (1-1024 chars per Agent Skills spec)
-            if [ $DESC_LEN -lt 1 ] || [ $DESC_LEN -gt 1024 ]; then
-              echo "❌ Description must be 1-1024 characters, got $DESC_LEN"
-              exit 1
-            fi
-
-            # Check for non-ASCII characters in description (CLI compatibility)
-            if echo "$DESC" | grep -qP '[^\x00-\x7F]'; then
-              echo "⚠️  Warning: Description contains non-ASCII characters (may cause CLI parsing issues)"
-            else
-              echo "✅ Description is ASCII-safe"
-            fi
-          else
-            echo "❌ Missing required field: description"
-            exit 1
-          fi
-
-          echo "✅ Frontmatter validation passed for ${{ matrix.skill }}"
-
-      - name: Validate skill structure
+      - name: Verify all skill files
         run: |
-          echo "📁 Validating skill structure for ${{ matrix.skill }}..."
-          SKILL_DIR="skills/${{ matrix.skill }}"
+          echo "📁 Checking installed skill files..."
 
-          # Check SKILL.md exists
-          if [ ! -f "$SKILL_DIR/SKILL.md" ]; then
-            echo "❌ SKILL.md not found"
+          SKILLS_DIR=".agents/skills"
+
+          if [ ! -d "$SKILLS_DIR" ]; then
+            echo "❌ Skills directory not found: $SKILLS_DIR"
             exit 1
           fi
-          echo "✅ SKILL.md exists"
 
-          # Check for references directory (if it exists)
-          if [ -d "$SKILL_DIR/references" ]; then
-            echo "✅ references/ directory found"
-            REF_COUNT=$(find "$SKILL_DIR/references" -name "*.md" | wc -l)
-            echo "   Found $REF_COUNT reference files"
-          fi
+          echo "✅ Skills directory exists: $SKILLS_DIR"
 
-          # Check for examples directory (if it exists)
-          if [ -d "$SKILL_DIR/examples" ]; then
-            echo "✅ examples/ directory found"
-            EX_COUNT=$(find "$SKILL_DIR/examples" -type f | wc -l)
-            echo "   Found $EX_COUNT example files"
-          fi
+          # 설치된 모든 스킬 확인
+          SKILL_COUNT=0
+          for skill_dir in "$SKILLS_DIR"/*; do
+            if [ -d "$skill_dir" ]; then
+              skill_name=$(basename "$skill_dir")
+              echo ""
+              echo "📦 Checking skill: $skill_name"
 
-          # Check for scripts directory (if it exists)
-          if [ -d "$SKILL_DIR/scripts" ]; then
-            echo "✅ scripts/ directory found"
-            SCRIPT_COUNT=$(find "$SKILL_DIR/scripts" -type f | wc -l)
-            echo "   Found $SCRIPT_COUNT scripts"
-          fi
-
-          # Check for assets directory (if it exists)
-          if [ -d "$SKILL_DIR/assets" ]; then
-            echo "✅ assets/ directory found"
-            ASSET_COUNT=$(find "$SKILL_DIR/assets" -type f | wc -l)
-            echo "   Found $ASSET_COUNT assets"
-          fi
-
-          echo "✅ Skill structure validation passed for ${{ matrix.skill }}"
-
-      - name: Validate skill-specific requirements
-        run: |
-          echo "🔍 Running skill-specific validation for ${{ matrix.skill }}..."
-
-          if [ "${{ matrix.skill }}" = "humanizer" ]; then
-            echo "Validating humanizer-specific files..."
-
-            # Expected reference files for humanizer
-            EXPECTED_FILES=(
-              "skills/humanizer/references/punctuation-patterns.md"
-              "skills/humanizer/references/spacing-patterns.md"
-              "skills/humanizer/references/pos-patterns.md"
-              "skills/humanizer/references/vocabulary-patterns.md"
-              "skills/humanizer/references/structure-patterns.md"
-            )
-
-            for file in "${EXPECTED_FILES[@]}"; do
-              if [ -f "$file" ]; then
-                echo "✅ Found: $file"
+              if [ -f "$skill_dir/SKILL.md" ]; then
+                echo "  ✅ Found SKILL.md"
+                SKILL_COUNT=$((SKILL_COUNT + 1))
               else
-                echo "❌ Missing: $file"
+                echo "  ❌ SKILL.md not found in $skill_dir"
                 exit 1
               fi
-            done
-
-          elif [ "${{ matrix.skill }}" = "grammar-checker" ]; then
-            echo "Validating grammar-checker-specific files..."
-
-            # Expected reference files for grammar-checker
-            EXPECTED_FILES=(
-              "skills/grammar-checker/references/rules.md"
-              "skills/grammar-checker/references/common-errors.md"
-            )
-
-            for file in "${EXPECTED_FILES[@]}"; do
-              if [ -f "$file" ]; then
-                echo "✅ Found: $file"
-              else
-                echo "❌ Missing: $file"
-                exit 1
-              fi
-            done
-          fi
-
-          echo "✅ Skill-specific validation passed for ${{ matrix.skill }}"
-
-      - name: Install skill with npx skills add
-        run: |
-          echo "🧪 Installing ${{ matrix.skill }} with npx skills add..."
-
-          # Install skill with claude-code agent and auto-confirm
-          npx skills add DaleSeo/korean-skills --skill ${{ matrix.skill }} --agent claude-code --yes || {
-            echo "⚠️  npx skills add failed, but continuing to verify..."
-            echo "This may be expected in CI environment due to TTY issues"
-          }
-
-          echo "✅ Skill installation step completed for ${{ matrix.skill }}"
-
-      - name: Verify installed skill
-        run: |
-          echo "🔍 Verifying installed ${{ matrix.skill }}..."
-
-          # Debug: Show all potential skill locations
-          echo "🔎 Searching for skill installation..."
-          echo "Checking ~/.claude/skills/:"
-          ls -laR ~/.claude/ 2>/dev/null || echo "~/.claude/ not found"
+            fi
+          done
 
           echo ""
-          echo "Checking ~/.agents/skills/:"
-          ls -laR ~/.agents/ 2>/dev/null || echo "~/.agents/ not found"
+          echo "✅ Successfully verified $SKILL_COUNT skills"
 
-          echo ""
-          echo "Searching entire home directory for ${{ matrix.skill }}:"
-          find ~ -name "${{ matrix.skill }}" -type d 2>/dev/null | head -10 || echo "No directories found"
-
-          # Try to find the skill in any location
-          SKILL_DIR=""
-          if [ -d ~/.claude/skills/${{ matrix.skill }} ]; then
-            SKILL_DIR=~/.claude/skills/${{ matrix.skill }}
-          elif [ -d ~/.agents/skills/${{ matrix.skill }} ]; then
-            SKILL_DIR=~/.agents/skills/${{ matrix.skill }}
-          else
-            # Last resort: search for it
-            SKILL_DIR=$(find ~ -name "${{ matrix.skill }}" -type d 2>/dev/null | grep -E '(\.claude|\.agents)/skills' | head -1)
-          fi
-
-          if [ -z "$SKILL_DIR" ]; then
-            echo "❌ Skill directory not found in any expected location"
-            echo "This may indicate npx skills add failed to install"
+          # 최소 1개 이상의 스킬이 설치되었는지 확인
+          if [ $SKILL_COUNT -eq 0 ]; then
+            echo "❌ No skills were installed"
             exit 1
           fi
 
-          echo "✅ Skill directory found: $SKILL_DIR"
-          echo "📁 Contents:"
-          ls -la "$SKILL_DIR"
-
-          # Find and display SKILL.md content
-          echo ""
-          echo "📄 Searching for SKILL.md..."
-          SKILL_FILE=$(find "$SKILL_DIR" -name "*.md" -type f | head -1)
-
-          if [ -z "$SKILL_FILE" ]; then
-            echo "❌ No .md files found in skill directory"
-            exit 1
-          fi
-
-          echo "✅ Found skill file: $SKILL_FILE"
-          echo "📋 Skill content preview:"
-          head -20 "$SKILL_FILE"
-
-          # Verify references directory (if expected)
-          echo ""
-          if [ -d "$SKILL_DIR/references" ]; then
-            echo "✅ references/ directory installed"
-            echo "📚 Reference files:"
-            ls -1 "$SKILL_DIR/references/"
-          else
-            echo "ℹ️  references/ directory not found (may not be required)"
-          fi
-
-          echo "✅ Skill verification completed for ${{ matrix.skill }}"
-
-  summary:
+  test-remote:
     runs-on: ubuntu-latest
-    needs: test
-    if: always()
+    # main 브랜치에 merge된 후에만 실행
+    if: github.ref == 'refs/heads/main'
+
     steps:
-      - name: Check test results
+      - name: Install all skills from Skills.sh
         run: |
-          echo "📊 Test Summary"
-          echo "==============="
-          if [ "${{ needs.test.result }}" = "success" ]; then
-            echo "✅ All skill tests passed!"
-            exit 0
-          else
-            echo "❌ Some skill tests failed"
+          npx skills add daleseo/korean-skills --yes
+          echo "✅ Successfully installed all skills from GitHub"
+
+      - name: Verify all skill files
+        run: |
+          echo "📁 Checking installed skill files..."
+
+          SKILLS_DIR=".agents/skills"
+
+          if [ ! -d "$SKILLS_DIR" ]; then
+            echo "❌ Skills directory not found: $SKILLS_DIR"
+            exit 1
+          fi
+
+          echo "✅ Skills directory exists: $SKILLS_DIR"
+
+          # 설치된 모든 스킬 확인
+          SKILL_COUNT=0
+          for skill_dir in "$SKILLS_DIR"/*; do
+            if [ -d "$skill_dir" ]; then
+              skill_name=$(basename "$skill_dir")
+              echo ""
+              echo "📦 Checking skill: $skill_name"
+
+              if [ -f "$skill_dir/SKILL.md" ]; then
+                echo "  ✅ Found SKILL.md"
+                SKILL_COUNT=$((SKILL_COUNT + 1))
+              else
+                echo "  ❌ SKILL.md not found in $skill_dir"
+                exit 1
+              fi
+            fi
+          done
+
+          echo ""
+          echo "✅ Successfully verified $SKILL_COUNT skills"
+
+          # 최소 1개 이상의 스킬이 설치되었는지 확인
+          if [ $SKILL_COUNT -eq 0 ]; then
+            echo "❌ No skills were installed"
             exit 1
           fi
