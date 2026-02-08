@@ -111,15 +111,12 @@ Each skill follows the Agent Skills specification:
 
 ## CI/CD
 
-GitHub Actions workflow (`.github/workflows/ci.yml`) runs:
+GitHub Actions workflow (`.github/workflows/ci.yml`) has two jobs:
 
-- **Frontmatter validation**: Checks `name` and `description` fields in SKILL.md
-- **Structure validation**: Verifies required directories and files exist
-- **Skill-specific validation**: Checks expected reference files per skill
-- **Installation test**: Tests `npx skills add` with auto-confirm (`--yes`)
-- **Verification**: Confirms skill installed correctly in `~/.claude/skills/` or `~/.agents/skills/`
+- **`test`** (all branches): Installs all skills from the local repository (`npx skills add . --yes`) and verifies each skill has `SKILL.md` in `.agents/skills/`
+- **`test-remote`** (main branch only): Installs all skills from GitHub (`npx skills add daleseo/korean-skills --yes`) and verifies installation in `.agents/skills/`
 
-Matrix strategy tests both skills independently (`fail-fast: false`).
+Both jobs check that at least one skill was installed successfully.
 
 ## Documentation Pattern
 
