@@ -15,11 +15,13 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Install all skills (local)
+        working-directory: ${{ runner.temp }}
         run: |
-          npx skills add . --yes
+          npx skills add "$GITHUB_WORKSPACE" --yes
           echo "✅ Successfully installed all skills from local repository"
 
       - name: Verify all skill files
+        working-directory: ${{ runner.temp }}
         run: |
           echo "📁 Checking installed skill files..."
 
