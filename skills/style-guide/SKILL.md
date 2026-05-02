@@ -379,6 +379,10 @@ allowed-tools: Read Write Edit Grep Glob AskUserQuestion
 실제 적용 사례는 [examples/](examples/) 디렉토리 참조:
 - [inconsistent.md](examples/inconsistent.md): 다양한 불일치가 포함된 텍스트
 - [consistent.md](examples/consistent.md): 일관된 스타일로 교정된 버전
+- [business-style.md](examples/business-style.md): 비즈니스/공문서 일관성 시연 (v1.1.0 장르 매트릭스)
+- [academic-style.md](examples/academic-style.md): 학술 논문 일관성 시연 (APA 인용 + 영어 병기)
+- [tech-style.md](examples/tech-style.md): 기술 문서 일관성 시연 (ISO 날짜 + 인라인 코드)
+- [blog-style.md](examples/blog-style.md): 마케팅/블로그 일관성 시연 (이모지 + 친근 어조)
 
 각 예시는 감지된 불일치, 분석, 통일안, 스타일 가이드를 포함합니다.
 

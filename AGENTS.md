@@ -42,22 +42,22 @@ Each skill follows the Agent Skills specification:
 
 **Purpose**: Transforms AI-generated Korean text into natural human writing based on scientific research (KatFishNet paper, 94.88% AUC accuracy)
 
-**Pattern Classification System** (v1.5.0):
+**Pattern Classification System** (v1.6.0):
 
 - All patterns include 3-field metadata: verification, severity, version (no 출처 field)
 - **Verification**: ✅ Scientific (KatFishNet, with inline citation, e.g., `검증: ✅ 과학적 (KatFishNet, 94.88% AUC)`) or 📊 Empirical (community observation)
 - **Severity**: S1 (decisive single occurrence) / S2 (frequency-based, 3+ repetitions) / S3 (weak signal, only with co-occurrence)
 - Scientific patterns: 1-6 (punctuation), 8-10 (spacing), 11-13 (POS diversity). Empirical patterns: 7, 14-24, 25-36
-- Version history: v1.1.0 added pattern 7 (colon), v1.2.0 added pattern 17 (plural marker), v1.3.0 added patterns 18-20 (pronoun/demonstrative/subject omission), v1.4.0 added patterns 25-36 (translation-ese) + severity system, v1.5.0 added patterns 37-38 (AI closing markers + hype vocabulary cluster) + over-rewriting guard + fidelity self-check
+- Version history: v1.1.0 added pattern 7 (colon), v1.2.0 added pattern 17 (plural marker), v1.3.0 added patterns 18-20 (pronoun/demonstrative/subject omission), v1.4.0 added patterns 25-36 (translation-ese) + severity system, v1.5.0 added patterns 37-38 (AI closing markers + hype vocabulary cluster) + over-rewriting guard + fidelity self-check, v1.6.0 added patterns 39 (~적 N abstract chain) + 40 (~것이다 future declarative) + naturalness grade A~D + pattern 37 boost (결말 단언 공식)
 
-**6 Categories, 38 Patterns**:
+**6 Categories, 40 Patterns**:
 
 1. Punctuation (7 patterns) - 94.88% AUC
 2. Spacing (3 patterns) - 79.51% AUC
 3. POS Diversity (3 patterns) - 82.99% AUC
-4. Vocabulary (9 patterns) - includes pronoun overuse, demonstrative overuse, subject omission, AI closing markers (결론적으로, 시사하는 바가 크다), hype vocabulary cluster (혁신적, 압도적, 전례 없는)
+4. Vocabulary (10 patterns) - includes pronoun overuse, demonstrative overuse, subject omission, AI closing markers (결론적으로, 시사하는 바가 크다, ~라는 뜻이다), hype vocabulary cluster (혁신적, 압도적, 전례 없는), abstract `~적 N` chains (전략적 함의, 구조적 한계)
 5. Sentence Structure (4 patterns)
-6. Translation-ese (12 patterns) - particle translation-ese (에 대해/통해/있어서), redundant verbs (가지고 있다), passive overuse (되어진다/에 의해), modal hedging (할 수 있다)
+6. Translation-ese (13 patterns) - particle translation-ese (에 대해/통해/있어서), redundant verbs (가지고 있다), passive overuse (되어진다/에 의해), modal hedging (할 수 있다), future declarative (~것이다 overuse)
 
 **Key Reference Files**:
 
