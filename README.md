@@ -203,6 +203,8 @@ For comprehensive Korean writing review, apply the three skills in sequence:
 
 **Why this order**: humanizer makes substantial sentence-level changes, so grammar-checker should run on the stabilized output. style-guide checks consistency, which only makes sense once the writing is stable.
 
+**Note on tone consistency**: humanizer's pattern 24 (uniform formal tone = AI signal) and style-guide's tone consistency check (mixed ~합니다/~해요 = inconsistent) examine different layers — humanizer looks at *document-level variety*, style-guide at *paragraph-level uniformity*. Apply in pipeline order: humanizer introduces intentional variation, then style-guide verifies paragraph consistency. They complement rather than conflict when used in this order.
+
 Install all three at once with `npx skills add daleseo/korean-skills` to enable this pipeline in any Agent Skills-compatible environment.
 
 ## How to Use

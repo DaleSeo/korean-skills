@@ -203,6 +203,8 @@ npx skills add daleseo/korean-skills@style-guide
 
 **순서가 중요한 이유**: humanizer가 문장을 크게 바꾸므로 안정된 출력에 대해 grammar-checker가 의미 있는 검사를 합니다. style-guide는 일관성 검사이므로 글이 안정된 상태에서 마지막에 적용됩니다.
 
+**어조 일관성 보충**: humanizer 패턴 24(경어체 균일성=AI 신호)와 style-guide 어조 일관성 검사(~합니다/~해요 혼용=비일관)는 결이 다른 층을 봅니다 — humanizer는 *글 단위 변주*, style-guide는 *단락 단위 일관*입니다. 파이프라인 순서로 적용하세요: humanizer가 의도적 변주를 도입하고, style-guide가 단락 일관성을 검증. 두 검사는 충돌이 아니라 보완 관계입니다.
+
 `npx skills add daleseo/korean-skills`로 세 스킬을 한 번에 설치하면 어떤 Agent Skills 호환 환경에서든 이 파이프라인을 활용할 수 있습니다.
 
 ## 사용법
