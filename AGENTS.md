@@ -88,6 +88,8 @@ Each skill follows the Agent Skills specification:
 
 **Purpose**: Ensures consistent writing style within documents or across projects (tone, terminology, formatting)
 
+**Genre-Aware Analysis** (v1.1.0): 4 document types (business, academic, technical, marketing/blog) with 7×4 category-genre matrix. Type determined by 3-tier priority — user-explicit → auto-detection → AskUserQuestion fallback. Each reference file contains a "장르별 권장 사항" section with type-specific guidelines.
+
 **3-Tier Authority System**:
 
 - **Tier 1 - Government Standards**: National Institute of Korean Language, Public Language guidelines
