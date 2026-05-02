@@ -33,7 +33,7 @@ Detects and corrects Korean AI writing patterns to transform text into natural h
 
 **Key features:**
 
-- 36 detection patterns across 6 categories with S1/S2/S3 severity tagging
+- 38 detection patterns across 6 categories with S1/S2/S3 severity tagging
 - Based on KatFishNet paper (94.88% AUC) + community-validated empirical patterns
 - Preserves meaning and formality level
 
@@ -42,7 +42,7 @@ Detects and corrects Korean AI writing patterns to transform text into natural h
 - Punctuation (7 patterns) - 94.88% AUC
 - Spacing (3 patterns) - 79.51% AUC
 - POS Diversity (3 patterns) - 82.99% AUC
-- Vocabulary (7 patterns) - pronoun/demonstrative overuse, subject omission, etc.
+- Vocabulary (9 patterns) - pronoun/demonstrative overuse, subject omission, AI closing markers (결론적으로), hype vocabulary cluster (혁신적/압도적)
 - Sentence Structure (4 patterns)
 - Translation-ese (12 patterns) - particle translation-ese (에 대해/통해/있어서), redundant verbs (가지고 있다), passive overuse (되어진다/에 의해), modal hedging (할 수 있다)
 
@@ -190,6 +190,20 @@ npx skills add daleseo/korean-skills@style-guide
   - Academic: University thesis writing standards
   - Industry: Kakao Enterprise tech writing guide
 - 📋 [Examples](./skills/style-guide/examples/)
+
+## Recommended Workflow: 3-Skill Pipeline
+
+For comprehensive Korean writing review, apply the three skills in sequence:
+
+```
+1. /humanizer       # AI pattern removal (largest changes — apply first)
+2. /grammar-checker # Spelling, spacing, grammar (review humanizer output)
+3. /style-guide     # Document consistency (terminology, tone, formatting)
+```
+
+**Why this order**: humanizer makes substantial sentence-level changes, so grammar-checker should run on the stabilized output. style-guide checks consistency, which only makes sense once the writing is stable.
+
+Install all three at once with `npx skills add daleseo/korean-skills` to enable this pipeline in any Agent Skills-compatible environment.
 
 ## How to Use
 
