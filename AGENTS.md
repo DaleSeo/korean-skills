@@ -13,7 +13,7 @@ korean-skills/
 ├── skills/
 │   ├── humanizer/           # AI writing pattern detection & correction
 │   │   ├── SKILL.md        # Main skill documentation (Agent Skills format)
-│   │   ├── references/     # 5 pattern reference files (punctuation, spacing, pos, vocabulary, structure)
+│   │   ├── references/     # 6 pattern reference files (punctuation, spacing, pos, vocabulary, structure, translation-ese)
 │   │   └── examples/       # Before/after examples
 │   ├── grammar-checker/     # Grammar & spelling checker
 │   │   ├── SKILL.md        # Main skill documentation (Agent Skills format)
@@ -42,19 +42,22 @@ Each skill follows the Agent Skills specification:
 
 **Purpose**: Transforms AI-generated Korean text into natural human writing based on scientific research (KatFishNet paper, 94.88% AUC accuracy)
 
-**Pattern Classification System** (v1.3.0):
+**Pattern Classification System** (v1.4.0):
 
-- All patterns include metadata: source, verification level, version
-- **Tier 1 - Scientific**: Patterns verified by KatFishNet paper (patterns 1-7: punctuation, 8-10: spacing, 11-13: POS diversity)
-- **Tier 2 - Empirical**: Community-added patterns based on observation (pattern 7: colon overuse added in v1.1.0, pattern 17: plural marker overuse added in v1.2.0, patterns 18-20: pronoun/demonstrative overuse and subject omission added in v1.3.0)
+- All patterns include 3-field metadata: verification, severity, version (no 출처 field)
+- **Verification**: ✅ Scientific (KatFishNet, with inline citation, e.g., `검증: ✅ 과학적 (KatFishNet, 94.88% AUC)`) or 📊 Empirical (community observation)
+- **Severity**: S1 (decisive single occurrence) / S2 (frequency-based, 3+ repetitions) / S3 (weak signal, only with co-occurrence)
+- Scientific patterns: 1-6 (punctuation), 8-10 (spacing), 11-13 (POS diversity). Empirical patterns: 7, 14-24, 25-36
+- Version history: v1.1.0 added pattern 7 (colon), v1.2.0 added pattern 17 (plural marker), v1.3.0 added patterns 18-20 (pronoun/demonstrative/subject omission), v1.4.0 added patterns 25-36 (translation-ese) + severity system
 
-**5 Categories, 24 Patterns**:
+**6 Categories, 36 Patterns**:
 
 1. Punctuation (7 patterns) - 94.88% AUC
 2. Spacing (3 patterns) - 79.51% AUC
 3. POS Diversity (3 patterns) - 82.99% AUC
 4. Vocabulary (7 patterns) - includes pronoun overuse, demonstrative overuse, subject omission
 5. Sentence Structure (4 patterns)
+6. Translation-ese (12 patterns) - particle translation-ese (에 대해/통해/있어서), redundant verbs (가지고 있다), passive overuse (되어진다/에 의해), modal hedging (할 수 있다)
 
 **Key Reference Files**:
 
@@ -63,6 +66,7 @@ Each skill follows the Agent Skills specification:
 - `references/pos-patterns.md`
 - `references/vocabulary-patterns.md`
 - `references/structure-patterns.md`
+- `references/translation-ese-patterns.md` - Korean translation-ese patterns (added v1.4.0)
 
 ### grammar-checker
 
@@ -137,24 +141,24 @@ README.md/README_KO.md → SKILL.md → references/*.md
 
 When adding patterns to humanizer:
 
-1. **Add metadata** to pattern in reference file:
+1. **Add 3-field metadata** to pattern in reference file (no 출처 field):
 
    ```markdown
    **메타데이터**:
 
-   - 출처: [source: KatFishNet paper or korean-skills community]
-   - 검증: [✅ 과학적 or 📊 경험적]
-   - 버전: [version added, e.g., 1.1.0]
+   - 검증: [✅ 과학적 (with inline citation, e.g., KatFishNet, 94.88% AUC) or 📊 경험적]
+   - 심각도: [S1 (decisive single occurrence) / S2 (frequency-based, 3+) / S3 (weak, only with co-occurrence)]
+   - 버전: [version added, e.g., 1.4.0]
    ```
 
 2. **Update version** in SKILL.md frontmatter (semantic versioning)
 
 3. **Update pattern counts**:
-   - SKILL.md description
+   - SKILL.md description and "총 N가지" headings
    - README.md and README_KO.md detection categories
    - Reference file headers
 
-4. **Update pattern classification section** in SKILL.md if adding new verification tier
+4. **Update pattern classification section** in SKILL.md if adding new verification level or severity rationale
 
 ## Coding Conventions
 
