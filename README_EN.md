@@ -1,0 +1,288 @@
+# Korean Skills
+
+> Korean language skills for AI coding agents
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Skills](https://img.shields.io/badge/skills-3-green.svg)](#skills)
+
+**[한국어 문서](./README.md)** 🇰🇷
+
+This repository provides Korean language skills for AI coding agents (Claude Code, Cursor, Windsurf, etc.) supporting the Agent Skills format.
+
+## Quick Start
+
+### Install all skills
+
+```bash
+npx skills add daleseo/korean-skills
+```
+
+### Install specific skill
+
+```bash
+npx skills add daleseo/korean-skills@humanizer
+npx skills add daleseo/korean-skills@grammar-checker
+npx skills add daleseo/korean-skills@style-guide
+```
+
+## Claude Code Plugin
+
+You can also install the skills as a [Claude Code plugin](https://code.claude.com/docs/en/discover-plugins).
+
+First, add the marketplace:
+
+```
+/plugin marketplace add daleseo/korean-skills
+```
+
+Then, install the plugin:
+
+```
+/plugin install korean-skills@korean-skills
+```
+
+Once installed, the skills are available as namespaced slash commands:
+
+| Slash Command | Description |
+|---|---|
+| `/korean-skills:humanizer` | Detect and rewrite AI-generated Korean text patterns |
+| `/korean-skills:grammar-checker` | Check Korean grammar, spelling, spacing, and punctuation |
+| `/korean-skills:style-guide` | Enforce style consistency in Korean documents |
+
+## GitHub CLI
+
+You can also install skills with the [GitHub CLI](https://cli.github.com/) using `gh skill` (preview):
+
+```bash
+# Install all skills into the current project for Claude Code
+gh skill install daleseo/korean-skills --agent claude-code
+
+# Install at user scope (available everywhere)
+gh skill install daleseo/korean-skills --agent claude-code --scope user
+
+# Install a specific skill
+gh skill install daleseo/korean-skills humanizer --agent claude-code
+
+# Pin to a specific release (skipped during updates so it won't auto-upgrade)
+gh skill install daleseo/korean-skills --pin v1.0.0 --agent claude-code
+
+# Preview skills before installing
+gh skill preview daleseo/korean-skills
+```
+
+`--agent` supports many hosts beyond Claude Code (Cursor, Codex, Gemini CLI, GitHub Copilot, and more); run `gh skill install --help` for the full list.
+
+## Releases
+
+Releases are tagged with semver and published automatically whenever `.claude-plugin/plugin.json#version` is bumped on `main`. The full list lives at [github.com/DaleSeo/korean-skills/releases](https://github.com/DaleSeo/korean-skills/releases).
+
+| Install path | What you get |
+|---|---|
+| `gh skill install daleseo/korean-skills <name>` | Latest tagged release |
+| `gh skill install daleseo/korean-skills <name> --pin v1.0.0` | Pinned to a specific release (skipped during updates) |
+| `npx skills add daleseo/korean-skills@<name>` | Latest content from `main` (no tag) |
+| Claude Code plugin (`/plugin install`) | Latest plugin version |
+
+If you need stability, pin via `gh skill install … --pin vX.Y.Z`. Pinned skills are skipped during `gh skill upgrade`, so you upgrade deliberately. For the freshest content, the other paths track `main` HEAD directly.
+
+## Skills
+
+### [humanizer](skills/humanizer)
+
+Detects and corrects Korean AI writing patterns to transform text into natural human writing
+
+**Key features:**
+
+- 40 detection patterns across 6 categories with S1/S2/S3 severity tagging and A~D naturalness grade
+- Based on KatFishNet paper (94.88% AUC) + community-validated empirical patterns
+- Preserves meaning and formality level
+
+**Detection categories:**
+
+- Punctuation (7 patterns) - 94.88% AUC
+- Spacing (3 patterns) - 79.51% AUC
+- POS Diversity (3 patterns) - 82.99% AUC
+- Vocabulary (10 patterns) - pronoun/demonstrative overuse, subject omission, AI closing markers (결론적으로), hype vocabulary cluster (혁신적/압도적), abstract `~적 N` chains (전략적 함의)
+- Sentence Structure (4 patterns)
+- Translation-ese (13 patterns) - particle translation-ese (에 대해/통해/있어서), redundant verbs (가지고 있다), passive overuse (되어진다/에 의해), modal hedging (할 수 있다), future declarative (~것이다 overuse)
+
+**When does it activate?**
+
+- When you paste Korean text for humanization
+- When using `/humanizer` command
+- When working with AI-generated Korean content
+
+**Example:**
+
+```
+Before (AI): 인공지능 기술의 발전은 빠르게 진행되고 있으며, 다양한 산업 분야에 적용되고 있습니다.
+After:       인공지능 기술은 빠르게 발전하고 있으며 여러 산업 분야에 적용되고 있습니다.
+```
+
+**Usage:**
+
+```
+/humanizer
+
+[Paste Korean text to humanize]
+```
+
+```bash
+npx skills add daleseo/korean-skills@humanizer
+```
+
+📖 **[Full documentation → SKILL.md](./skills/humanizer/SKILL.md)**
+
+**Resources:**
+
+- 📄 [KatFishNet Paper](https://arxiv.org/abs/2503.00032v4)
+- 📁 [Pattern references](./skills/humanizer/references/)
+- 🌐 [English version](https://github.com/blader/humanizer) | [Chinese version](https://github.com/op7418/Humanizer-zh)
+
+---
+
+### [grammar-checker](skills/grammar-checker)
+
+Korean grammar, spelling, spacing, and punctuation checker based on standard Korean language rules
+
+**Key features:**
+
+- 4 error categories with priority levels
+- Educational explanations for each error
+- Context-aware corrections (formal vs informal)
+- Confidence levels (certain errors vs recommendations)
+
+**Error categories:**
+
+1. Spelling/Orthography (Highest priority) - 되/돼, -ㄴ지/-는지, etc.
+2. Spacing (High priority) - 의존명사, 보조용언, 단위명사
+3. Grammar Structure (Medium priority) - Particles, verb endings
+4. Punctuation (Low priority) - Commas, exclamation marks
+
+**When does it activate?**
+
+- When you paste Korean text for grammar checking
+- When using `/grammar-checker` command
+- When reviewing Korean documents
+
+**Example:**
+
+```
+Before: 이 프로젝트는 사용자들에게 더나은 경험을 제공하기위해 시작되요.
+After:  이 프로젝트는 사용자들에게 더 나은 경험을 제공하기 위해 시작됐어요.
+```
+
+**Usage:**
+
+```
+/grammar-checker
+
+[Paste Korean text to check]
+```
+
+```bash
+npx skills add daleseo/korean-skills@grammar-checker
+```
+
+📖 **[Full documentation → SKILL.md](./skills/grammar-checker/SKILL.md)**
+
+**Resources:**
+
+- 📁 [Grammar rules reference](./skills/grammar-checker/references/rules.md)
+- 📁 [Common errors reference](./skills/grammar-checker/references/common-errors.md)
+- 📋 [Examples](./skills/grammar-checker/examples/)
+
+---
+
+### [style-guide](skills/style-guide)
+
+Korean document style consistency checker for uniform writing across documents
+
+**Key features:**
+
+- 7 consistency check categories
+- Multi-layered authority sources (government, academic, industry standards)
+- Context-aware suggestions (document type: business/academic/technical/marketing)
+- Majority-rule principle for conflicting styles
+
+**Check categories:**
+
+1. Tone & Formality (Highest priority) - formal vs informal speech, subject consistency
+2. Terminology (High priority) - same concept different words, loanword spelling
+3. Numbers & Units (Medium priority) - Arabic vs Korean numerals, unit spacing
+4. List Structure (Medium priority) - bullet styles, ending consistency
+5. Quotation & Emphasis (Low priority) - quotation marks, bold/italic
+6. Date & Time (Low priority) - date formats, 12h/24h time
+7. Links & References (Low priority) - link text, citation formats
+
+**When does it activate?**
+
+- When reviewing multi-author documents
+- When using `/style-guide` command
+- When maintaining project-wide terminology standards
+- When preparing formal documents for brand consistency
+
+**Example:**
+
+```
+Inconsistent: 사용자는 화면을 확인합니다. 유저가 페이지 설정을 변경해요.
+Consistent:   사용자는 화면을 확인합니다. 사용자가 화면 설정을 변경합니다.
+```
+
+**Usage:**
+
+```
+/style-guide
+
+[Paste Korean document to check for style consistency]
+```
+
+```bash
+npx skills add daleseo/korean-skills@style-guide
+```
+
+📖 **[Full documentation → SKILL.md](./skills/style-guide/SKILL.md)**
+
+**Resources:**
+
+- 📁 [Authority standards](./skills/style-guide/references/)
+  - Government: National Institute of Korean Language guidelines
+  - Academic: University thesis writing standards
+  - Industry: Kakao Enterprise tech writing guide
+- 📋 [Examples](./skills/style-guide/examples/)
+
+## Recommended Workflow: 3-Skill Pipeline
+
+For comprehensive Korean writing review, apply the three skills in sequence:
+
+```
+1. /humanizer       # AI pattern removal (largest changes — apply first)
+2. /grammar-checker # Spelling, spacing, grammar (review humanizer output)
+3. /style-guide     # Document consistency (terminology, tone, formatting)
+```
+
+**Why this order**: humanizer makes substantial sentence-level changes, so grammar-checker should run on the stabilized output. style-guide checks consistency, which only makes sense once the writing is stable.
+
+**Note on tone consistency**: humanizer's pattern 24 (uniform formal tone = AI signal) and style-guide's tone consistency check (mixed ~합니다/~해요 = inconsistent) examine different layers — humanizer looks at *document-level variety*, style-guide at *paragraph-level uniformity*. Apply in pipeline order: humanizer introduces intentional variation, then style-guide verifies paragraph consistency. They complement rather than conflict when used in this order.
+
+Install all three at once with `npx skills add daleseo/korean-skills` to enable this pipeline in any Agent Skills-compatible environment.
+
+## How to Use
+
+After installation, skills activate automatically in each AI tool:
+
+| Tool           | Activation Method                    | Example                                      |
+| -------------- | ------------------------------------ | -------------------------------------------- |
+| Claude Code    | Auto (keyword detection) or `/skill` | "Humanize this Korean text"                  |
+| Cursor         | File pattern matching                | Auto-activates when working with Korean text |
+| GitHub Copilot | `@workspace` mention                 | `@workspace Check Korean grammar`            |
+
+---
+
+## License
+
+MIT License - Free to use, modify, and distribute.
+
+## Contributing
+
+Contributions are welcome! Feel free to submit issues or pull requests.

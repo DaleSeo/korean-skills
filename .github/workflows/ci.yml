@@ -7,7 +7,82 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  validate-spec:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Checkout agentskills repository
+        uses: actions/checkout@v6
+        with:
+          repository: agentskills/agentskills
+          path: agentskills
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+          cache: "pip"
+          cache-dependency-path: "agentskills/skills-ref/pyproject.toml"
+
+      - name: Install skills-ref
+        run: |
+          cd agentskills/skills-ref
+          pip install -e .
+
+      - name: Validate all skills
+        run: |
+          echo "🔍 Validating all skills..."
+
+          find skills -name "SKILL.md" | while read -r skill_file; do
+            skill_dir=$(dirname "$skill_file")
+            skill_name=$(basename "$skill_dir")
+
+            echo ""
+            echo "Validating $skill_name..."
+
+            if skills-ref validate "$skill_dir"; then
+              echo "✅ $skill_name is valid"
+            else
+              echo "❌ $skill_name validation failed"
+              exit 1
+            fi
+          done
+
+          echo ""
+          echo "✅ All skills validated successfully"
+
+  validate-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Ensure gh skill is available
+        run: |
+          if ! gh skill --help >/dev/null 2>&1; then
+            echo "Installing latest gh CLI..."
+            sudo mkdir -p -m 755 /etc/apt/keyrings
+            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq gh
+          fi
+          gh --version | head -1
+
+      - name: Validate with gh skill
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh skill publish --dry-run
+
+  install-local:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,7 +109,6 @@ jobs:
 
           echo "✅ Skills directory exists: $SKILLS_DIR"
 
-          # 설치된 모든 스킬 확인
           SKILL_COUNT=0
           for skill_dir in "$SKILLS_DIR"/*; do
             if [ -d "$skill_dir" ]; then
@@ -55,15 +129,13 @@ jobs:
           echo ""
           echo "✅ Successfully verified $SKILL_COUNT skills"
 
-          # 최소 1개 이상의 스킬이 설치되었는지 확인
           if [ $SKILL_COUNT -eq 0 ]; then
             echo "❌ No skills were installed"
             exit 1
           fi
 
-  test-remote:
+  install-remote:
     runs-on: ubuntu-latest
-    # main 브랜치에 merge된 후에만 실행
     if: github.ref == 'refs/heads/main'
 
     steps:
@@ -85,7 +157,6 @@ jobs:
 
           echo "✅ Skills directory exists: $SKILLS_DIR"
 
-          # 설치된 모든 스킬 확인
           SKILL_COUNT=0
           for skill_dir in "$SKILLS_DIR"/*; do
             if [ -d "$skill_dir" ]; then
@@ -106,7 +177,6 @@ jobs:
           echo ""
           echo "✅ Successfully verified $SKILL_COUNT skills"
 
-          # 최소 1개 이상의 스킬이 설치되었는지 확인
           if [ $SKILL_COUNT -eq 0 ]; then
             echo "❌ No skills were installed"
             exit 1

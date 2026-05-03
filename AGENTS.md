@@ -23,8 +23,8 @@ korean-skills/
 │       ├── SKILL.md        # Main skill documentation (Agent Skills format)
 │       ├── references/     # 6 category reference files (tone, terminology, numbering, list, quotation, datetime)
 │       └── examples/       # Inconsistent/consistent examples
-├── README.md               # English documentation
-└── README_KO.md            # Korean documentation
+├── README.md               # Korean documentation (default)
+└── README_EN.md            # English documentation
 ```
 
 ## Skills Architecture
@@ -117,16 +117,33 @@ Each skill follows the Agent Skills specification:
 
 ## CI/CD
 
-GitHub Actions workflow (`.github/workflows/ci.yml`) has two jobs:
+`.github/workflows/ci.yml` runs on every PR and main push with four jobs:
 
-- **`test`** (all branches): Installs all skills from the local repository (`npx skills add . --yes`) and verifies each skill has `SKILL.md` in `.agents/skills/`
-- **`test-remote`** (main branch only): Installs all skills from GitHub (`npx skills add daleseo/korean-skills --yes`) and verifies installation in `.agents/skills/`
+- **`validate-spec`**: Validates each `SKILL.md` against the Agent Skills spec using `skills-ref validate` (from `agentskills/agentskills`).
+- **`validate-publish`**: Runs `gh skill publish --dry-run` to check publishability before main merges.
+- **`install-local`**: Installs all skills from the local working tree via `npx skills add "$GITHUB_WORKSPACE" --yes` and verifies each skill landed in `.agents/skills/`.
+- **`install-remote`** (main only): Installs from the public GitHub source (`npx skills add daleseo/korean-skills --yes`) as a post-merge smoke test.
 
-Both jobs check that at least one skill was installed successfully.
+`.github/workflows/release.yml` runs on main pushes only. It reads `.claude-plugin/plugin.json#version`, creates a matching `vX.Y.Z` tag if missing, and runs `gh skill publish --tag` so `gh skill install daleseo/korean-skills --pin vX.Y.Z` resolves.
+
+## Releasing / Versioning
+
+Three places carry version numbers, but only one matters operationally.
+
+**`.claude-plugin/plugin.json#version`** — the source of truth. Bump it whenever you touch `skills/`, `.claude-plugin/`, or `.github/workflows/release.yml`. Effects:
+
+- The release workflow tags a matching `vX.Y.Z` on the next main push, which is what `gh skill install daleseo/korean-skills --pin vX.Y.Z` and `claude plugin update` resolve to.
+- New installs always pull the latest content regardless.
+
+Use semver: patch for fixes/wording, minor for new skills or pattern additions, major when removing or renaming a skill.
+
+**Individual `SKILL.md#version`** (e.g. humanizer 1.6.0) — independent of the plugin version. Track skill-internal evolution there. The plugin version doesn't have to follow the highest skill version — they're separate trackers, like Apollo's pattern (apollo-skills plugin at 1.2.x while internal skills are at various 1.x).
+
+**`marketplace.json#metadata.version` and `marketplace.json#plugins[0].version`** — keep aligned with `plugin.json#version` for tidiness, but no automation reads them today. CI does not enforce sync.
 
 ## Documentation Pattern
 
-**README Split**: README.md (English) and README_KO.md (Korean) are separate files with identical structure:
+**README Split**: README.md (Korean, default) and README_EN.md (English) are separate files with identical structure. Korean is the default since most users of this repo are Korean speakers:
 
 - Link to other language at top
 - Quick Start with installation commands
@@ -136,7 +153,7 @@ Both jobs check that at least one skill was installed successfully.
 **Documentation Hierarchy**:
 
 ```
-README.md/README_KO.md → SKILL.md → references/*.md
+README.md/README_EN.md → SKILL.md → references/*.md
 ```
 
 ## Adding New Patterns
@@ -157,7 +174,7 @@ When adding patterns to humanizer:
 
 3. **Update pattern counts**:
    - SKILL.md description and "총 N가지" headings
-   - README.md and README_KO.md detection categories
+   - README.md and README_EN.md detection categories
    - Reference file headers
 
 4. **Update pattern classification section** in SKILL.md if adding new verification level or severity rationale

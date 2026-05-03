@@ -1,0 +1,64 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Ensure gh skill is available
+        run: |
+          if ! gh skill --help >/dev/null 2>&1; then
+            echo "Installing latest gh CLI..."
+            sudo mkdir -p -m 755 /etc/apt/keyrings
+            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq gh
+          fi
+          gh --version | head -1
+
+      - name: Read plugin version
+        id: version
+        run: |
+          v=$(jq -r .version .claude-plugin/plugin.json)
+          if [[ ! "$v" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "❌ plugin.json#version is not semver: '$v'"
+            exit 1
+          fi
+          echo "tag=v${v}" >> "$GITHUB_OUTPUT"
+          echo "Tag will be: v${v}"
+
+      - name: Skip if release already exists
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
+            echo "ℹ️ ${{ steps.version.outputs.tag }} already released, skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "✅ ${{ steps.version.outputs.tag }} is available"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish skills
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh skill publish --tag "${{ steps.version.outputs.tag }}"

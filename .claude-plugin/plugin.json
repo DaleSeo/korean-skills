@@ -4,5 +4,16 @@
   "version": "1.0.0",
   "author": {
     "name": "DaleSeo"
-  }
+  },
+  "homepage": "https://github.com/DaleSeo/korean-skills",
+  "repository": "https://github.com/DaleSeo/korean-skills",
+  "license": "MIT",
+  "keywords": [
+    "korean",
+    "humanizer",
+    "grammar-checker",
+    "style-guide",
+    "ai-writing",
+    "natural-language"
+  ]
 }
