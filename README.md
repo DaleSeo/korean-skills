@@ -1,13 +1,13 @@
 # 한국어 스킬
 
-> AI 코딩 에이전트를 위한 한국어 스킬 모음
+> AI 에이전트를 위한 한국어 스킬 모음
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Skills](https://img.shields.io/badge/skills-3-green.svg)](#스킬)
 
 **[English](./README_EN.md)** 🇺🇸
 
-Claude Code, Cursor, Windsurf 등 Agent Skills 형식을 지원하는 AI 코딩 에이전트에서 사용할 수 있는 한국어 특화 스킬을 제공합니다.
+Claude Code, Cursor, Windsurf 등 Agent Skills 형식을 지원하는 AI 에이전트에서 사용할 수 있는 한국어 특화 스킬을 제공합니다.
 
 ## 빠른 시작
 
@@ -31,14 +31,14 @@ npx skills add daleseo/korean-skills@style-guide
 
 먼저 마켓플레이스를 추가합니다.
 
-```
-/plugin marketplace add daleseo/korean-skills
+```bash
+claude /plugin marketplace add daleseo/korean-skills
 ```
 
 그다음 플러그인을 설치합니다.
 
-```
-/plugin install korean-skills@korean-skills
+```bash
+claude /plugin install korean-skills@korean-skills
 ```
 
 설치하면 다음 슬래시 명령어로 각 스킬을 호출할 수 있습니다.
@@ -81,7 +81,7 @@ gh skill preview daleseo/korean-skills
 | `gh skill install daleseo/korean-skills <name>` | 가장 최근 태그 릴리스 |
 | `gh skill install daleseo/korean-skills <name> --pin v1.0.0` | 특정 릴리스 고정 (자동 업데이트 제외) |
 | `npx skills add daleseo/korean-skills@<name>` | `main` 최신 콘텐츠 (태그 없음) |
-| Claude Code 플러그인 (`/plugin install`) | 최신 플러그인 버전 |
+| Claude Code 플러그인 (`claude /plugin install`) | 최신 플러그인 버전 |
 
 안정성이 필요하면 `gh skill install … --pin vX.Y.Z`로 고정하세요. 고정된 스킬은 `gh skill upgrade` 대상에서 제외되므로 의도적으로만 업그레이드됩니다. 최신 콘텐츠가 필요하면 다른 경로들이 `main` HEAD를 그대로 추적합니다.
 

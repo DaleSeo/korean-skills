@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This repository provides Korean language skills for AI coding agents (Claude Code, Cursor, Windsurf, etc.) that support the Agent Skills format. Each skill is a self-contained module with documentation, reference materials, and examples.
+This repository provides Korean language skills for AI agents (Claude Code, Cursor, Windsurf, etc.) that support the Agent Skills format. Each skill is a self-contained module with documentation, reference materials, and examples.
 
 ## Repository Structure
 

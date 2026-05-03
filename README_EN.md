@@ -1,13 +1,13 @@
 # Korean Skills
 
-> Korean language skills for AI coding agents
+> Korean language skills for AI agents
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Skills](https://img.shields.io/badge/skills-3-green.svg)](#skills)
 
 **[한국어 문서](./README.md)** 🇰🇷
 
-This repository provides Korean language skills for AI coding agents (Claude Code, Cursor, Windsurf, etc.) supporting the Agent Skills format.
+This repository provides Korean language skills for AI agents (Claude Code, Cursor, Windsurf, etc.) supporting the Agent Skills format.
 
 ## Quick Start
 
@@ -31,14 +31,14 @@ You can also install the skills as a [Claude Code plugin](https://code.claude.co
 
 First, add the marketplace:
 
-```
-/plugin marketplace add daleseo/korean-skills
+```bash
+claude /plugin marketplace add daleseo/korean-skills
 ```
 
 Then, install the plugin:
 
-```
-/plugin install korean-skills@korean-skills
+```bash
+claude /plugin install korean-skills@korean-skills
 ```
 
 Once installed, the skills are available as namespaced slash commands:
@@ -81,7 +81,7 @@ Releases are tagged with semver and published automatically whenever `.claude-pl
 | `gh skill install daleseo/korean-skills <name>` | Latest tagged release |
 | `gh skill install daleseo/korean-skills <name> --pin v1.0.0` | Pinned to a specific release (skipped during updates) |
 | `npx skills add daleseo/korean-skills@<name>` | Latest content from `main` (no tag) |
-| Claude Code plugin (`/plugin install`) | Latest plugin version |
+| Claude Code plugin (`claude /plugin install`) | Latest plugin version |
 
 If you need stability, pin via `gh skill install … --pin vX.Y.Z`. Pinned skills are skipped during `gh skill upgrade`, so you upgrade deliberately. For the freshest content, the other paths track `main` HEAD directly.
 

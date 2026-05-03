@@ -5,7 +5,7 @@
     "url": "https://github.com/DaleSeo"
   },
   "metadata": {
-    "description": "Korean language skills for AI coding agents: humanizer, grammar-checker, style-guide",
+    "description": "Korean language skills for AI agents: humanizer, grammar-checker, style-guide",
     "version": "1.0.0"
   },
   "plugins": [
