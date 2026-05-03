@@ -1,0 +1,15 @@
+{
+  "name": "korean-skills",
+  "owner": {
+    "name": "DaleSeo",
+    "url": "https://github.com/DaleSeo"
+  },
+  "plugins": [
+    {
+      "name": "korean-skills",
+      "source": "./",
+      "description": "Korean language skills: grammar checker, AI text humanizer, style guide enforcer",
+      "version": "1.0.0"
+    }
+  ]
+}
