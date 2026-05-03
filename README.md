@@ -25,6 +25,30 @@ npx skills add daleseo/korean-skills@grammar-checker
 npx skills add daleseo/korean-skills@style-guide
 ```
 
+## Claude Code Plugin
+
+You can also install the skills as a [Claude Code plugin](https://code.claude.com/docs/en/discover-plugins).
+
+First, add the marketplace:
+
+```
+/plugin marketplace add daleseo/korean-skills
+```
+
+Then, install the plugin:
+
+```
+/plugin install korean-skills@korean-skills
+```
+
+Once installed, the skills are available as namespaced slash commands:
+
+| Slash Command | Description |
+|---|---|
+| `/korean-skills:humanizer` | Detect and rewrite AI-generated Korean text patterns |
+| `/korean-skills:grammar-checker` | Check Korean grammar, spelling, spacing, and punctuation |
+| `/korean-skills:style-guide` | Enforce style consistency in Korean documents |
+
 ## Skills
 
 ### [humanizer](skills/humanizer)

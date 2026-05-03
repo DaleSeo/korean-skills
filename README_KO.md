@@ -25,6 +25,30 @@ npx skills add daleseo/korean-skills@grammar-checker
 npx skills add daleseo/korean-skills@style-guide
 ```
 
+## Claude Code 플러그인
+
+[Claude Code 플러그인](https://code.claude.com/docs/en/discover-plugins) 형태로도 설치할 수 있습니다.
+
+먼저 마켓플레이스를 추가합니다.
+
+```
+/plugin marketplace add daleseo/korean-skills
+```
+
+그다음 플러그인을 설치합니다.
+
+```
+/plugin install korean-skills@korean-skills
+```
+
+설치하면 다음 슬래시 명령어로 각 스킬을 호출할 수 있습니다.
+
+| 슬래시 명령어 | 설명 |
+|---|---|
+| `/korean-skills:humanizer` | AI가 생성한 한국어 텍스트의 패턴을 감지하고 자연스럽게 교정 |
+| `/korean-skills:grammar-checker` | 한국어 문법, 맞춤법, 띄어쓰기, 구두점 검사 |
+| `/korean-skills:style-guide` | 한국어 문서의 스타일 일관성 점검 |
+
 ## 스킬 목록
 
 ### [humanizer](skills/humanizer)
