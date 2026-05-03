@@ -7,6 +7,43 @@ on:
     branches: [main]
 
 jobs:
+  verify-version-bump:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Verify plugin.json#version bumped if skills/ or .claude-plugin/ changed
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          base=$(git show "$BASE_SHA":.claude-plugin/plugin.json | jq -r .version)
+          head=$(jq -r .version .claude-plugin/plugin.json)
+          echo "Base version: $base"
+          echo "Head version: $head"
+
+          if [ "$base" = "$head" ]; then
+            changed=$(git diff --name-only "$BASE_SHA"...HEAD | grep -E '^(skills/|\.claude-plugin/)' || true)
+            if [ -n "$changed" ]; then
+              echo ""
+              echo "❌ skills/ or .claude-plugin/ changed but plugin.json#version is still $head"
+              echo ""
+              echo "Changed files that require a version bump:"
+              echo "$changed" | sed 's/^/  /'
+              echo ""
+              echo "Bump .claude-plugin/plugin.json#version to publish a new release."
+              exit 1
+            fi
+          fi
+
+          echo "✅ version check passed"
+
   validate-spec:
     runs-on: ubuntu-latest
     permissions:
