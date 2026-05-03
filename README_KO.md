@@ -49,6 +49,42 @@ npx skills add daleseo/korean-skills@style-guide
 | `/korean-skills:grammar-checker` | 한국어 문법, 맞춤법, 띄어쓰기, 구두점 검사 |
 | `/korean-skills:style-guide` | 한국어 문서의 스타일 일관성 점검 |
 
+## GitHub CLI
+
+[GitHub CLI](https://cli.github.com/)의 `gh skill` (프리뷰) 명령어로도 설치할 수 있습니다.
+
+```bash
+# 현재 프로젝트에 Claude Code용으로 모든 스킬 설치
+gh skill install daleseo/korean-skills --agent claude-code
+
+# 사용자 전역 범위로 설치 (어디서든 사용 가능)
+gh skill install daleseo/korean-skills --agent claude-code --scope user
+
+# 특정 스킬만 설치
+gh skill install daleseo/korean-skills humanizer --agent claude-code
+
+# 특정 릴리스에 고정 (업데이트 시 자동 갱신되지 않음)
+gh skill install daleseo/korean-skills --pin v1.0.0 --agent claude-code
+
+# 설치 전 미리보기
+gh skill preview daleseo/korean-skills
+```
+
+`--agent`는 Claude Code 외에도 Cursor, Codex, Gemini CLI, GitHub Copilot 등 다양한 호스트를 지원합니다. 전체 목록은 `gh skill install --help`로 확인하세요.
+
+## 릴리스
+
+`.claude-plugin/plugin.json#version`이 `main`에서 변경될 때마다 시맨틱 버전 태그로 자동 릴리스됩니다. 전체 목록은 [github.com/DaleSeo/korean-skills/releases](https://github.com/DaleSeo/korean-skills/releases)에서 확인할 수 있습니다.
+
+| 설치 경로 | 받는 내용 |
+|---|---|
+| `gh skill install daleseo/korean-skills <name>` | 가장 최근 태그 릴리스 |
+| `gh skill install daleseo/korean-skills <name> --pin v1.0.0` | 특정 릴리스 고정 (자동 업데이트 제외) |
+| `npx skills add daleseo/korean-skills@<name>` | `main` 최신 콘텐츠 (태그 없음) |
+| Claude Code 플러그인 (`/plugin install`) | 최신 플러그인 버전 |
+
+안정성이 필요하면 `gh skill install … --pin vX.Y.Z`로 고정하세요. 고정된 스킬은 `gh skill upgrade` 대상에서 제외되므로 의도적으로만 업그레이드됩니다. 최신 콘텐츠가 필요하면 다른 경로들이 `main` HEAD를 그대로 추적합니다.
+
 ## 스킬 목록
 
 ### [humanizer](skills/humanizer)

@@ -49,6 +49,42 @@ Once installed, the skills are available as namespaced slash commands:
 | `/korean-skills:grammar-checker` | Check Korean grammar, spelling, spacing, and punctuation |
 | `/korean-skills:style-guide` | Enforce style consistency in Korean documents |
 
+## GitHub CLI
+
+You can also install skills with the [GitHub CLI](https://cli.github.com/) using `gh skill` (preview):
+
+```bash
+# Install all skills into the current project for Claude Code
+gh skill install daleseo/korean-skills --agent claude-code
+
+# Install at user scope (available everywhere)
+gh skill install daleseo/korean-skills --agent claude-code --scope user
+
+# Install a specific skill
+gh skill install daleseo/korean-skills humanizer --agent claude-code
+
+# Pin to a specific release (skipped during updates so it won't auto-upgrade)
+gh skill install daleseo/korean-skills --pin v1.0.0 --agent claude-code
+
+# Preview skills before installing
+gh skill preview daleseo/korean-skills
+```
+
+`--agent` supports many hosts beyond Claude Code (Cursor, Codex, Gemini CLI, GitHub Copilot, and more); run `gh skill install --help` for the full list.
+
+## Releases
+
+Releases are tagged with semver and published automatically whenever `.claude-plugin/plugin.json#version` is bumped on `main`. The full list lives at [github.com/DaleSeo/korean-skills/releases](https://github.com/DaleSeo/korean-skills/releases).
+
+| Install path | What you get |
+|---|---|
+| `gh skill install daleseo/korean-skills <name>` | Latest tagged release |
+| `gh skill install daleseo/korean-skills <name> --pin v1.0.0` | Pinned to a specific release (skipped during updates) |
+| `npx skills add daleseo/korean-skills@<name>` | Latest content from `main` (no tag) |
+| Claude Code plugin (`/plugin install`) | Latest plugin version |
+
+If you need stability, pin via `gh skill install … --pin vX.Y.Z`. Pinned skills are skipped during `gh skill upgrade`, so you upgrade deliberately. For the freshest content, the other paths track `main` HEAD directly.
+
 ## Skills
 
 ### [humanizer](skills/humanizer)
