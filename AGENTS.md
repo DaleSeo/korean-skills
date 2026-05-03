@@ -119,6 +119,7 @@ Each skill follows the Agent Skills specification:
 
 `.github/workflows/ci.yml` runs on every PR and main push with four jobs:
 
+- **`verify-version-bump`** (PR only): Fails the PR if anything under `skills/` or `.claude-plugin/` changed without bumping `.claude-plugin/plugin.json#version`. Prevents shipping silent updates.
 - **`validate-spec`**: Validates each `SKILL.md` against the Agent Skills spec using `skills-ref validate` (from `agentskills/agentskills`).
 - **`validate-publish`**: Runs `gh skill publish --dry-run` to check publishability before main merges.
 - **`install-local`**: Installs all skills from the local working tree via `npx skills add "$GITHUB_WORKSPACE" --yes` and verifies each skill landed in `.agents/skills/`.
@@ -130,7 +131,7 @@ Each skill follows the Agent Skills specification:
 
 Three places carry version numbers, but only one matters operationally.
 
-**`.claude-plugin/plugin.json#version`** — the source of truth. Bump it whenever you touch `skills/`, `.claude-plugin/`, or `.github/workflows/release.yml`. Effects:
+**`.claude-plugin/plugin.json#version`** — the source of truth. Bump it whenever you touch `skills/` or `.claude-plugin/`. The `verify-version-bump` CI job enforces this on every PR. Effects:
 
 - The release workflow tags a matching `vX.Y.Z` on the next main push, which is what `gh skill install daleseo/korean-skills --pin vX.Y.Z` and `claude plugin update` resolve to.
 - New installs always pull the latest content regardless.
