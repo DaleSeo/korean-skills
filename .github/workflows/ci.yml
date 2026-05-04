@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  verify-version-bump:
+  validate-version:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
