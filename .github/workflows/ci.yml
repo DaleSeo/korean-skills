@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    env:
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
 
     steps:
       - name: Checkout repository
@@ -20,8 +22,6 @@ jobs:
           fetch-depth: 0
 
       - name: Verify plugin.json#version bumped if skills/ or .claude-plugin/ changed
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           base=$(git show "$BASE_SHA":.claude-plugin/plugin.json | jq -r .version)
           head=$(jq -r .version .claude-plugin/plugin.json)
@@ -42,7 +42,47 @@ jobs:
             fi
           fi
 
-          echo "✅ version check passed"
+          echo "✅ plugin version check passed"
+
+      - name: Verify SKILL.md#version bumped if skill content changed
+        if: always()
+        run: |
+          changed_skills=$(git diff --name-only "$BASE_SHA"...HEAD -- 'skills/*/**' \
+            | awk -F/ 'NF>=3 {print $2}' | sort -u)
+          if [ -z "$changed_skills" ]; then
+            echo "✅ No skill content changed; per-skill version bump not required."
+            exit 0
+          fi
+          extract_version() {
+            awk '/^---$/{c++; next} c==1' | yq -r '.metadata.version // ""'
+          }
+          fail=0
+          for skill in $changed_skills; do
+            head_file="skills/$skill/SKILL.md"
+            if [ ! -f "$head_file" ]; then
+              echo "ℹ️  $skill: SKILL.md missing on HEAD (skill deleted); skipping."
+              continue
+            fi
+            base_content=$(git show "$BASE_SHA:$head_file" 2>/dev/null || true)
+            if [ -z "$base_content" ]; then
+              echo "ℹ️  $skill: new skill on this branch; skipping bump check."
+              continue
+            fi
+            head_v=$(extract_version < "$head_file")
+            base_v=$(printf '%s\n' "$base_content" | extract_version)
+            if [[ ! "$head_v" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "❌ $skill: SKILL.md metadata.version is not semver: '$head_v'"
+              fail=1
+              continue
+            fi
+            if [ "$head_v" = "$base_v" ] || ! printf '%s\n%s\n' "$base_v" "$head_v" | sort -V -C; then
+              echo "❌ $skill: content changed but SKILL.md metadata.version did not strictly increase ($base_v → $head_v). Bump the patch version for bug fixes."
+              fail=1
+              continue
+            fi
+            echo "✅ $skill: $base_v → $head_v"
+          done
+          exit $fail
 
   validate-spec:
     runs-on: ubuntu-latest
