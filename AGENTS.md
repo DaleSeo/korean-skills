@@ -119,7 +119,7 @@ Each skill follows the Agent Skills specification:
 
 `.github/workflows/ci.yml` runs on every PR and main push with five jobs:
 
-- **`validate-version`** (PR only): Fails the PR if anything under `skills/` or `.claude-plugin/` changed without bumping `.claude-plugin/plugin.json#version`. Prevents shipping silent updates.
+- **`validate-version`** (PR only): Two checks. (1) Fails if anything under `skills/` or `.claude-plugin/` changed without bumping `.claude-plugin/plugin.json#version`. (2) For each skill whose content changed under `skills/<name>/**`, fails if the skill's own `SKILL.md` `metadata.version` did not strictly increase. Prevents shipping silent updates at both the plugin and individual-skill level.
 - **`validate-spec`**: Validates each `SKILL.md` against the Agent Skills spec using `skills-ref validate` (from `agentskills/agentskills`).
 - **`validate-publish`**: Runs `gh skill publish --dry-run` to check publishability before main merges.
 - **`install-local`**: Installs all skills from the local working tree via `npx skills add "$GITHUB_WORKSPACE" --yes` and verifies each skill landed in `.agents/skills/`.
@@ -138,7 +138,7 @@ Three places carry version numbers, but only one matters operationally.
 
 Use semver: patch for fixes/wording, minor for new skills or pattern additions, major when removing or renaming a skill.
 
-**Individual `SKILL.md#version`** (e.g. humanizer 1.6.0) — independent of the plugin version. Track skill-internal evolution there. The plugin version doesn't have to follow the highest skill version — they're separate trackers, like Apollo's pattern (apollo-skills plugin at 1.2.x while internal skills are at various 1.x).
+**Individual `SKILL.md#version`** (e.g. humanizer 1.6.0) — independent of the plugin version. Track skill-internal evolution there. The plugin version doesn't have to follow the highest skill version — they're separate trackers, like Apollo's pattern (apollo-skills plugin at 1.2.x while internal skills are at various 1.x). When a PR modifies any file under `skills/<name>/`, the `validate-version` job requires that skill's `metadata.version` to strictly increase (semver patch is enough for bug fixes).
 
 **`marketplace.json#metadata.version` and `marketplace.json#plugins[0].version`** — keep aligned with `plugin.json#version` for tidiness, but no automation reads them today. CI does not enforce sync.
 
